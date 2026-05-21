@@ -231,103 +231,187 @@
     <script>
         // --- BASE DE DATOS DE PREGUNTAS (Adaptadas a 5º de Primaria sobre La Edad Media) ---
         const QUESTIONS_DB = [
-            {
-                q: "¿Cómo se llamaba el territorio controlado por los musulmanes en la Península Ibérica durante la Edad Media?",
-                a: ["Al-Ándalus", "Reino Visigodo", "Hispania Romana", "Imperio Bizantino"],
-                c: 0,
-                cat: "Al-Ándalus"
-            },
-            {
-                q: "¿Quiénes eran los guerreros encargados de defender los feudos a cambio de tierras?",
-                a: ["Los caballeros", "Los campesinos", "Los artesanos", "Los monjes"],
-                c: 0,
-                cat: "Sociedad Feudal"
-            },
-            {
-                q: "¿Cuál era el grupo social más numeroso de la Edad Media, encargado de trabajar las tierras de los nobles?",
-                a: ["Los campesinos", "Los caballeros", "El clero", "Los reyes"],
-                c: 0,
-                cat: "Sociedad Feudal"
-            },
-            {
-                q: "¿Cómo se llamaba el estamento formado por obispos, sacerdotes y monjes que rezaban en los monasterios?",
-                a: ["El clero", "La nobleza", "Los siervos", "Los gremios"],
-                c: 0,
-                cat: "La Iglesia"
-            },
-            {
-                q: "¿Qué sistema político y social de la Edad Media se basaba en el juramento de fidelidad y el reparto de tierras?",
-                a: ["El feudalismo", "La democracia", "El imperio romano", "El socialismo"],
-                c: 0,
-                cat: "Sociedad Feudal"
-            },
-            {
-                q: "¿Dónde se fabricaban, copiaban e ilustraban los valiosos libros a mano antes de inventarse la imprenta?",
-                a: ["En los monasterios", "En los mercados", "En las herrerías", "En las mezquitas"],
-                c: 0,
-                cat: "Cultura"
-            },
-            {
-                q: "¿Qué nombre recibían las asociaciones medievales de artesanos del mismo oficio (zapateros, panaderos)?",
-                a: ["Gremios", "Sindicatos", "Feudos", "Universidades"],
-                c: 0,
-                cat: "Ciudades"
-            },
-            {
-                q: "¿Quiénes viajaban de castillo en castillo entreteniendo a la gente con canciones sobre grandes hazañas de caballeros?",
-                a: ["Los juglares", "Los escribas", "Los obispos", "Los señores feudales"],
-                c: 0,
-                cat: "Cultura"
-            },
-            {
-                q: "¿Qué majestuoso palacio y fortaleza construyeron los musulmanes en la ciudad de Granada?",
-                a: ["La Alhambra", "El Acueducto", "La Catedral Gótica", "La Mezquita"],
-                c: 0,
-                cat: "Arte y Arquitectura"
-            },
-            {
-                q: "¿Con qué acontecimiento histórico se inicia la Edad Media en el año 476 d.C.?",
-                a: ["La caída del Imperio Romano de Occidente", "El descubrimiento de América", "La llegada de los árabes", "La coronación de Carlomagno"],
-                c: 0,
-                cat: "Historia"
-            },
-            {
-                q: "¿Cómo se llamaba la fortaleza amurallada donde residía el señor feudal con sus guardias?",
-                a: ["Castillo", "Monasterio", "Catedral", "Ayuntamiento"],
-                c: 0,
-                cat: "Arquitectura"
-            },
-            {
-                q: "¿Qué estilo medieval se caracterizaba por altos muros, ventanas pequeñas y arcos de medio punto oscuros?",
-                a: ["Románico", "Gótico", "Renacentista", "Barroco"],
-                c: 0,
-                cat: "Arte"
-            },
-            {
-                q: "¿Qué estilo artístico medieval introdujo los arcos apuntados, enormes rosetones y luminosas vidrieras?",
-                a: ["Gótico", "Románico", "Prerrománico", "Mudéjar"],
-                c: 0,
-                cat: "Arte"
-            },
-            {
-                q: "¿Cómo llamamos a la larga campaña en la que los reinos cristianos del norte reconquistaron el sur de la Península?",
-                a: ["La Reconquista", "Las Cruzadas", "La Guerra de los Cien Años", "La invasión visigoda"],
-                c: 0,
-                cat: "Historia"
-            },
-            {
-                q: "¿Qué inventó Johannes Gutenberg hacia el final de la Edad Media, permitiendo multiplicar los libros?",
-                a: ["La imprenta", "La brújula", "La pólvora", "El telescopio"],
-                c: 0,
-                cat: "Inventos"
-            },
-            {
-                q: "¿Quiénes eran los temibles navegantes del norte de Europa que asaltaban barcos y costas medievales?",
-                a: ["Los vikingos", "Los cartagineses", "Los romanos", "Los fenicios"],
-                c: 0,
-                cat: "Historia"
-            }
-        ];
+{
+q: "¿Cómo se llamaba el territorio controlado por los musulmanes en la Península Ibérica durante la Edad Media?",
+a: ["Al-Ándalus", "Reino Visigodo", "Hispania Romana", "Imperio Bizantino"],
+c: 0,
+cat: "Al-Ándalus"
+},
+{
+q: "¿Quiénes eran los guerreros encargados de defender los feudos a cambio de tierras?",
+a: ["Los caballeros", "Los campesinos", "Los artesanos", "Los monjes"],
+c: 0,
+cat: "Sociedad Feudal"
+},
+{
+q: "¿Cuál era el grupo social más numeroso de la Edad Media, encargado de trabajar las tierras de los nobles?",
+a: ["Los campesinos", "Los caballeros", "El clero", "Los reyes"],
+c: 0,
+cat: "Sociedad Feudal"
+},
+{
+q: "¿Cómo se llamaba el estamento formado por obispos, sacerdotes y monjes que rezaban en los monasterios?",
+a: ["El clero", "La nobleza", "Los siervos", "Los gremios"],
+c: 0,
+cat: "La Iglesia"
+},
+{
+q: "¿Qué sistema político y social de la Edad Media se basaba en el juramento de fidelidad y el reparto de tierras?",
+a: ["El feudalismo", "La democracia", "El imperio romano", "El socialismo"],
+c: 0,
+cat: "Sociedad Feudal"
+},
+{
+q: "¿Dónde se fabricaban, copiaban e ilustraban los valiosos libros a mano antes de inventarse la imprenta?",
+a: ["En los monasterios", "En los mercados", "En las herrerías", "En las mezquitas"],
+c: 0,
+cat: "Cultura"
+},
+{
+q: "¿Qué nombre recibían las asociaciones medievales de artesanos del mismo oficio (zapateros, panaderos)?",
+a: ["Gremios", "Sindicatos", "Feudos", "Universidades"],
+c: 0,
+cat: "Ciudades"
+},
+{
+q: "¿Quiénes viajaban de castillo en castillo entreteniendo a la gente con canciones sobre grandes hazañas de caballeros?",
+a: ["Los juglares", "Los escribas", "Los obispos", "Los señores feudales"],
+c: 0,
+cat: "Cultura"
+},
+{
+q: "¿Qué majestuoso palacio y fortaleza construyeron los musulmanes en la ciudad de Granada?",
+a: ["La Alhambra", "El Acueducto", "La Catedral Gótica", "La Mezquita"],
+c: 0,
+cat: "Arte y Arquitectura"
+},
+{
+q: "¿Con qué acontecimiento histórico se inicia la Edad Media en el año 476 d.C.?",
+a: ["La caída del Imperio Romano de Occidente", "El descubrimiento de América", "La llegada de los árabes", "La coronación de Carlomagno"],
+c: 0,
+cat: "Historia"
+},
+{
+q: "¿Cómo se llamaba la fortaleza amurallada donde residía el señor feudal con sus guardias?",
+a: ["Castillo", "Monasterio", "Catedral", "Ayuntamiento"],
+c: 0,
+cat: "Arquitectura"
+},
+{
+q: "¿Qué estilo medieval se caracterizaba por altos muros, ventanas pequeñas y arcos de medio punto oscuros?",
+a: ["Románico", "Gótico", "Renacentista", "Barroco"],
+c: 0,
+cat: "Arte"
+},
+{
+q: "¿Qué estilo artístico medieval introdujo los arcos apuntados, enormes rosetones y luminosas vidrieras?",
+a: ["Gótico", "Románico", "Prerrománico", "Mudéjar"],
+c: 0,
+cat: "Arte"
+},
+{
+q: "¿Cómo llamamos a la larga campaña en la que los reinos cristianos del norte reconquistaron el sur de la Península?",
+a: ["La Reconquista", "Las Cruzadas", "La Guerra de los Cien Años", "La invasión visigoda"],
+c: 0,
+cat: "Historia"
+},
+{
+q: "¿Qué inventó Johannes Gutenberg hacia el final de la Edad Media, permitiendo multiplicar los libros?",
+a: ["La imprenta", "La brújula", "La pólvora", "El telescopio"],
+c: 0,
+cat: "Inventos"
+},
+{
+q: "¿Quiénes eran los temibles navegantes del norte de Europa que asaltaban barcos y costas medievales?",
+a: ["Los vikingos", "Los cartagineses", "Los romanos", "Los fenicios"],
+c: 0,
+cat: "Historia"
+},
+{
+q: "¿Qué rey de Castilla y León unificó la cultura medieval reuniendo a sabios cristianos, musulmanes y judíos?",
+a: ["Alfonso X el Sabio", "Don Pelayo", "Felipe II", "Jaime I el Conquistador"],
+c: 0,
+cat: "Cultura"
+},
+{
+q: "¿Cómo se llamaba la gran mezquita construida en el siglo VIII en la capital del emirato y califato de Al-Ándalus?",
+a: ["Mezquita de Córdoba", "La Giralda de Sevilla", "La Alhambra", "Mezquita de Damasco"],
+c: 0,
+cat: "Arte y Arquitectura"
+},
+{
+q: "¿Qué nuevos cultivos introdujeron los musulmanes en la Península Ibérica gracias a sus sistemas de regadío?",
+a: ["Arroz, naranja y alcachofa", "Patatas, tomates y maíz", "Trigo, cebada y vid", "Cacao, vainilla y café"],
+c: 0,
+cat: "Al-Ándalus"
+},
+{
+q: "¿Qué batalla del año 1212 supuso una victoria clave para los reinos cristianos frente al imperio almohade?",
+a: ["Batalla de las Navas de Tolosa", "Batalla de Covadonga", "Batalla de Guadalete", "Batalla de Poitiers"],
+c: 0,
+cat: "La Reconquista"
+},
+{
+q: "¿Quién fue el primer líder cristiano que inició la resistencia asturiana en la batalla de Covadonga en el año 722?",
+a: ["Don Pelayo", "Alfonso VI", "Sancho III", "Abderramán I"],
+c: 0,
+cat: "La Reconquista"
+},
+{
+q: "¿Cuál era la principal ruta de peregrinación cristiana en el norte de España durante la Edad Media?",
+a: ["El Camino de Santiago", "La Vía de la Plata", "La Calzada Romana", "La Ruta de la Seda"],
+c: 0,
+cat: "Cultura y Religión"
+},
+{
+q: "¿Quién era el gobernante supremo de Al-Ándalus cuando este territorio se independizó de Damasco en el año 929?",
+a: ["El Califa", "El Emir", "El Rey Visigodo", "El Sultán"],
+c: 0,
+cat: "Al-Ándalus"
+},
+{
+q: "¿Qué estamento medieval no tenía privilegios, pagaba impuestos y vivía del trabajo de la tierra o de la artesanía?",
+a: ["El pueblo llano", "La alta nobleza", "Los obispos", "Los caballeros"],
+c: 0,
+cat: "Sociedad Feudal"
+},
+{
+q: "¿Qué técnica agrícola consistía en dejar descansar una parte de la tierra cultivable para que recuperase nutrientes?",
+a: ["El barbecho", "La rotación trienal", "El regadío por goteo", "La quema de pastos"],
+c: 0,
+cat: "Economía Medieval"
+},
+{
+q: "¿Qué enfermedad devastadora se extendió por Europa en el año 1348, eliminando a un tercio de la población?",
+a: ["La Peste Negra", "La Gripe Común", "El Sarampión", "La Varicela"],
+c: 0,
+cat: "Historia"
+},
+{
+q: "¿Cómo se llamaba la nueva clase social que surgió en las ciudades medievales, formada por comerciantes y artesanos ricos?",
+a: ["La burguesía", "El campesinado", "El clero regular", "Los vasallos"],
+c: 0,
+cat: "Sociedad en las Ciudades"
+},
+{
+q: "¿Cuál era el principal centro de oración, copia de manuscritos y producción de alimentos en el ámbito rural medieval?",
+a: ["El monasterio", "El mercado", "La universidad", "El ayuntamiento"],
+c: 0,
+cat: "La Iglesia"
+},
+{
+q: "¿Qué metales o materiales utilizaba el herrero en la Edad Media para fabricar herraduras, rejas y espadas?",
+a: ["Hierro y bronce", "Cobre y plástico", "Oro y plata", "Aluminio"],
+c: 0,
+cat: "Oficios"
+},
+{
+q: "¿Cómo se llamaba el aprendiz de un gremio que ya dominaba el oficio pero aún no tenía su propia tienda?",
+a: ["Oficial", "Maestro", "Siervo", "Caballero"],
+c: 0,
+cat: "Gremios"
+}
+];
 
         // --- EFECTOS DE SONIDO SINTETIZADOS (Web Audio API) ---
         class SoundEngine {
