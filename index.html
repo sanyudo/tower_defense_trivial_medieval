@@ -208,7 +208,186 @@
       <script>
          // --- BASE DE DATOS DE PREGUNTAS (Adaptadas a 5º de Primaria sobre La Edad Media) ---
          const QUESTIONS_DB = [
-         {
+          {
+    q: "¿Cómo se llamaba el rey que gobernaba junto a la reina Isabel en la unión de Castilla y Aragón?",
+    a: ["Fernando de Aragón", "Carlos I", "Alfonso X", "Ramiro II"],
+    c: 0,
+    cat: "Historia"
+  },
+  {
+    q: "¿Qué pueblo invadió la Península Ibérica en el año 711 iniciando Al-Ándalus?",
+    a: ["Los musulmanes", "Los romanos", "Los vikingos", "Los fenicios"],
+    c: 0,
+    cat: "Al-Ándalus"
+  },
+  {
+    q: "¿Cómo se llamaban las tierras y propiedades controladas por un señor feudal?",
+    a: ["Feudo", "Condado", "Zoco", "Monasterio"],
+    c: 0,
+    cat: "Sociedad Feudal"
+  },
+  {
+    q: "¿Qué edificio religioso musulmán se utilizaba para la oración?",
+    a: ["Mezquita", "Catedral", "Monasterio", "Sinagoga"],
+    c: 0,
+    cat: "Al-Ándalus"
+  },
+  {
+    q: "¿Cómo se llamaba el líder religioso máximo de la Iglesia cristiana en Roma?",
+    a: ["Papa", "Califa", "Obispo", "Abad"],
+    c: 0,
+    cat: "La Iglesia"
+  },
+  {
+    q: "¿Qué animales utilizaban normalmente los caballeros medievales para combatir y viajar?",
+    a: ["Caballos", "Camellos", "Elefantes", "Bueyes"],
+    c: 0,
+    cat: "Sociedad Feudal"
+  },
+  {
+    q: "¿Qué parte del castillo solía estar rodeada de agua para dificultar los ataques?",
+    a: ["El foso", "La almena", "La muralla", "La torre"],
+    c: 0,
+    cat: "Arquitectura"
+  },
+  {
+    q: "¿Cómo se llamaban los impuestos o pagos que los campesinos daban al señor feudal?",
+    a: ["Tributos", "Miniaturas", "Ferias", "Cruzadas"],
+    c: 0,
+    cat: "Sociedad Feudal"
+  },
+  {
+    q: "¿Qué ciudad fue la última conquistada por los Reyes Católicos en 1492?",
+    a: ["Granada", "Toledo", "Sevilla", "Córdoba"],
+    c: 0,
+    cat: "Historia"
+  },
+  {
+    q: "¿Qué material se utilizaba antes del papel para escribir manuscritos medievales?",
+    a: ["Pergamino", "Plástico", "Cartón", "Mármol"],
+    c: 0,
+    cat: "Cultura"
+  },
+  {
+    q: "¿Cómo se llamaba la torre desde donde los soldados vigilaban los alrededores del castillo?",
+    a: ["Torre del homenaje", "Rosetón", "Claustro", "Ábside"],
+    c: 0,
+    cat: "Arquitectura"
+  },
+  {
+    q: "¿Qué nombre recibían los campesinos que podían abandonar las tierras y no estaban atados al señor feudal?",
+    a: ["Campesinos libres", "Siervos", "Caballeros", "Monjes"],
+    c: 0,
+    cat: "Sociedad Feudal"
+  },
+  {
+    q: "¿Qué ciencia desarrollaron mucho los sabios de Al-Ándalus observando las estrellas?",
+    a: ["Astronomía", "Geología", "Biología marina", "Paleontología"],
+    c: 0,
+    cat: "Cultura"
+  },
+  {
+    q: "¿Cómo se llamaba el patio interior de muchos monasterios medievales?",
+    a: ["Claustro", "Muralla", "Zoco", "Mazmorra"],
+    c: 0,
+    cat: "La Iglesia"
+  },
+  {
+    q: "¿Qué oficio medieval trabajaba la madera para fabricar muebles y carros?",
+    a: ["Carpintero", "Herrero", "Panadero", "Tejedor"],
+    c: 0,
+    cat: "Oficios"
+  },
+  {
+    q: "¿Qué idioma utilizaban habitualmente los monjes y estudiosos medievales para escribir libros?",
+    a: ["Latín", "Árabe", "Griego", "Castellano"],
+    c: 0,
+    cat: "Cultura"
+  },
+  {
+    q: "¿Cómo se llamaban las expediciones de saqueo realizadas por los vikingos?",
+    a: ["Incursiones", "Cruzadas", "Ferias", "Peregrinaciones"],
+    c: 0,
+    cat: "Historia"
+  },
+  {
+    q: "¿Qué construcción defensiva rodeaba muchas ciudades medievales?",
+    a: ["Muralla", "Acueducto", "Pirámide", "Anfiteatro"],
+    c: 0,
+    cat: "Arquitectura"
+  },
+  {
+    q: "¿Qué alimento básico elaboraban los molinos medievales triturando cereales?",
+    a: ["Harina", "Queso", "Aceite", "Miel"],
+    c: 0,
+    cat: "Economía Medieval"
+  },
+  {
+    q: "¿Cómo se llamaban los comerciantes que viajaban de ciudad en ciudad vendiendo productos?",
+    a: ["Mercaderes", "Juglares", "Escuderos", "Monjes"],
+    c: 0,
+    cat: "Ciudades"
+  },
+  {
+    q: "¿Qué famosa escuela de traductores medieval reunió textos árabes, latinos y hebreos en Castilla?",
+    a: ["Escuela de Traductores de Toledo", "Universidad de Salamanca", "Monasterio de Silos", "Catedral de Burgos"],
+    c: 0,
+    cat: "Cultura"
+  },
+  {
+    q: "¿Cómo se llamaba la armadura metálica formada por pequeños anillos entrelazados?",
+    a: ["Cota de malla", "Túnica", "Armadura de cuero", "Yelmo romano"],
+    c: 0,
+    cat: "Sociedad Feudal"
+  },
+  {
+    q: "¿Qué instrumento utilizaban las campanas de las iglesias para llamar a la oración?",
+    a: ["Campanario", "Rosetón", "Foso", "Almena"],
+    c: 0,
+    cat: "La Iglesia"
+  },
+  {
+    q: "¿Qué ciudad santa intentaron recuperar los cristianos durante las Cruzadas?",
+    a: ["Jerusalén", "Roma", "París", "Toledo"],
+    c: 0,
+    cat: "Historia"
+  },
+  {
+    q: "¿Cómo se llamaban las pequeñas aberturas en lo alto de las murallas para proteger a los defensores?",
+    a: ["Almenas", "Vidrieras", "Columnas", "Cúpulas"],
+    c: 0,
+    cat: "Arquitectura"
+  },
+  {
+    q: "¿Qué famoso héroe medieval castellano era conocido como Rodrigo Díaz de Vivar?",
+    a: ["El Cid Campeador", "Don Pelayo", "Jaime I", "Fernán González"],
+    c: 0,
+    cat: "Historia"
+  },
+  {
+    q: "¿Qué invento permitió orientarse en el mar incluso cuando no se veían las estrellas?",
+    a: ["La brújula", "La imprenta", "La pólvora", "El reloj de arena"],
+    c: 0,
+    cat: "Inventos"
+  },
+  {
+    q: "¿Cómo se llamaba el lugar donde se encerraba a los prisioneros en un castillo medieval?",
+    a: ["Mazmorra", "Claustro", "Scriptorium", "Refectorio"],
+    c: 0,
+    cat: "Arquitectura"
+  },
+  {
+    q: "¿Qué producto muy valioso llegaba de Asia y se utilizaba para dar sabor a la comida?",
+    a: ["Especias", "Carbón", "Hierro", "Mármol"],
+    c: 0,
+    cat: "Economía"
+  },
+  {
+    q: "¿Cómo se llamaba el lugar donde los monjes medievales comían juntos en silencio?",
+    a: ["Refectorio", "Claustro", "Rosetón", "Campanario"],
+    c: 0,
+    cat: "La Iglesia"
+  }, {
          q: "¿Cómo se llamaba el territorio controlado por los musulmanes en la Península Ibérica durante la Edad Media?",
          a: ["Al-Ándalus", "Reino Visigodo", "Hispania Romana", "Imperio Bizantino"],
          c: 0,
