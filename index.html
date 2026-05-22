@@ -1,1790 +1,1795 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trivia Tower Defense - Mercado Medieval</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle, #1e1b4b 0%, #0f172a 100%);
-            touch-action: manipulation;
-        }
-        .medieval-title {
-            font-family: 'Cinzel', serif;
-        }
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 0.6; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
-        }
-        .glow-effect {
-            animation: pulse-glow 3s infinite ease-in-out;
-        }
-        /* Estilo para items deshabilitados o bloqueados en tienda */
-        .locked-item {
-            filter: grayscale(0.8) opacity(0.6);
-        }
-    </style>
-</head>
-<body class="min-h-screen text-slate-100 flex flex-col items-center justify-between p-4 overflow-x-hidden select-none">
-
-    <!-- Contenedor principal de la app -->
-    <div class="w-full max-w-4xl bg-slate-900/80 backdrop-blur-md rounded-3xl border border-indigo-500/30 shadow-2xl flex flex-col overflow-hidden my-auto relative">
-        
-        <!-- BARRA DE ESTADO (HUD) -->
-        <div class="bg-slate-950/60 border-b border-indigo-500/20 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Trivia Tower Defense - Mercado Medieval</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <style>
+         body {
+         font-family: 'Inter', sans-serif;
+         background: radial-gradient(circle, #1e1b4b 0%, #0f172a 100%);
+         touch-action: manipulation;
+         }
+         .medieval-title {
+         font-family: 'Cinzel', serif;
+         }
+         @keyframes pulse-glow {
+         0%, 100% { opacity: 0.6; transform: scale(1); }
+         50% { opacity: 1; transform: scale(1.05); }
+         }
+         .glow-effect {
+         animation: pulse-glow 3s infinite ease-in-out;
+         }
+         /* Estilo para items deshabilitados o bloqueados en tienda */
+         .locked-item {
+         filter: grayscale(0.8) opacity(0.6);
+         }
+      </style>
+   </head>
+   <body class="min-h-screen text-slate-100 flex flex-col items-center justify-between p-4 overflow-x-hidden select-none">
+      <audio id="bgm-audio" loop preload="auto">
+         <source src="musica-medieval.mp3" type="audio/mpeg">
+      </audio>
+      <button id="btn-toggle-music" class="flex items-center gap-2 bg-slate-900/90 border border-slate-500/30 px-3 py-2 rounded-full text-slate-300 hover:text-white transition-all">
+      <i id="music-icon" class="fa-solid fa-music"></i>
+      </button>
+      <!-- Contenedor principal de la app -->
+      <div class="w-full max-w-4xl bg-slate-900/80 backdrop-blur-md rounded-3xl border border-indigo-500/30 shadow-2xl flex flex-col overflow-hidden my-auto relative">
+         <!-- BARRA DE ESTADO (HUD) -->
+         <div class="bg-slate-950/60 border-b border-indigo-500/20 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-2 bg-indigo-950/40 border border-indigo-500/30 px-4 py-2 rounded-full">
-                <span class="text-yellow-400 text-xl font-bold animate-bounce">🪙</span>
-                <span id="hud-coins" class="font-extrabold text-lg text-yellow-300">0</span>
-                <span class="text-xs text-indigo-300 ml-1">monedas</span>
+               <span class="text-yellow-400 text-xl font-bold animate-bounce">🪙</span>
+               <span id="hud-coins" class="font-extrabold text-lg text-yellow-300">0</span>
+               <span class="text-xs text-indigo-300 ml-1">monedas</span>
             </div>
-
             <div class="flex items-center gap-1.5 bg-slate-900/90 border border-indigo-500/20 px-4 py-2 rounded-full">
-                <span class="text-sm font-semibold text-indigo-200 mr-1">Murallas:</span>
-                <div id="hud-lives" class="flex gap-1 text-red-500 text-lg">
-                    <!-- Dinámico -->
-                </div>
+               <span class="text-sm font-semibold text-indigo-200 mr-1">Murallas:</span>
+               <div id="hud-lives" class="flex gap-1 text-red-500 text-lg">
+                  <!-- Dinámico -->
+               </div>
             </div>
-
             <!-- Indicadores de efectos activos -->
             <div class="flex items-center gap-2">
-                <div id="indicator-hourglass" class="hidden bg-cyan-950/60 border border-cyan-500/40 px-3 py-1 rounded-full text-xs text-cyan-300 animate-pulse items-center gap-1">
-                    <span>⌛</span> <span id="hourglass-count">3</span> preg
-                </div>
-                <div id="indicator-shield" class="hidden bg-amber-950/60 border border-amber-500/40 px-3 py-1 rounded-full text-xs text-amber-300 animate-pulse items-center gap-1">
-                    <span>🛡️</span> Activo
-                </div>
+               <div id="indicator-hourglass" class="hidden bg-cyan-950/60 border border-cyan-500/40 px-3 py-1 rounded-full text-xs text-cyan-300 animate-pulse items-center gap-1">
+                  <span>⌛</span> <span id="hourglass-count">3</span> preg
+               </div>
+               <div id="indicator-shield" class="hidden bg-amber-950/60 border border-amber-500/40 px-3 py-1 rounded-full text-xs text-amber-300 animate-pulse items-center gap-1">
+                  <span>🛡️</span> Activo
+               </div>
             </div>
-
             <!-- Indicador de velocidad dinámica del trol -->
             <div class="flex items-center gap-1.5 bg-slate-900/90 border border-orange-500/30 px-4 py-2 rounded-full">
-                <span class="text-xs font-semibold text-orange-300">Furia enemiga:</span>
-                <span id="hud-speed" class="font-extrabold text-sm text-orange-400">100%</span>
+               <span class="text-xs font-semibold text-orange-300">Furia enemiga:</span>
+               <span id="hud-speed" class="font-extrabold text-sm text-orange-400">100%</span>
             </div>
-
             <div class="flex items-center gap-2 bg-rose-950/40 border border-rose-500/30 px-4 py-2 rounded-full">
-                <i class="fa-regular fa-clock text-rose-400 animate-pulse"></i>
-                <span id="hud-timer" class="font-extrabold text-lg text-rose-300">30.0s</span>
+               <i class="fa-regular fa-clock text-rose-400 animate-pulse"></i>
+               <span id="hud-timer" class="font-extrabold text-lg text-rose-300">30.0s</span>
             </div>
-        </div>
-
-        <!-- PANTALLA DE JUEGO (CANVAS) -->
-        <div class="relative w-full h-48 bg-gradient-to-b from-sky-950 to-indigo-950 overflow-hidden border-b border-indigo-500/20">
+         </div>
+         <!-- PANTALLA DE JUEGO (CANVAS) -->
+         <div class="relative w-full h-48 bg-gradient-to-b from-sky-950 to-indigo-950 overflow-hidden border-b border-indigo-500/20">
             <canvas id="gameCanvas" class="w-full h-full block"></canvas>
             <!-- Overlay de daño en pantalla -->
             <div id="damage-flash" class="absolute inset-0 bg-red-600/0 pointer-events-none transition-all duration-150"></div>
             <!-- Indicador de acción (¡Correcto! / ¡Fallo!) -->
             <div id="action-overlay" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 scale-50 transition-all duration-300">
-                <span id="action-text" class="text-4xl md:text-5xl font-extrabold medieval-title drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] px-6 py-2 rounded-full"></span>
+               <span id="action-text" class="text-4xl md:text-5xl font-extrabold medieval-title drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] px-6 py-2 rounded-full"></span>
             </div>
-            
             <!-- Botón flotante de Tienda en partida -->
             <button id="btn-ingame-shop" class="hidden absolute top-3 left-3 bg-amber-500 hover:bg-amber-400 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold shadow-lg transition-all active:scale-95 items-center gap-1.5 z-10">
-                <i class="fa-solid fa-store"></i> MERCADO
+            <i class="fa-solid fa-store"></i> MERCADO
             </button>
-        </div>
-
-        <!-- ÁREA DE CONTENIDOS (INICIO / PREGUNTAS / FIN) -->
-        <div class="p-6 md:p-8 flex-1 flex flex-col min-h-[340px] justify-center relative bg-slate-900/40">
-            
+         </div>
+         <!-- ÁREA DE CONTENIDOS (INICIO / PREGUNTAS / FIN) -->
+         <div class="p-6 md:p-8 flex-1 flex flex-col min-h-[340px] justify-center relative bg-slate-900/40">
             <!-- PANTALLA DE INICIO -->
             <div id="screen-start" class="flex flex-col items-center justify-center text-center space-y-6">
-                <div class="relative">
-                    <div class="absolute -inset-1 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 blur opacity-40 glow-effect"></div>
-                    <h1 class="relative text-4xl md:text-5xl font-black medieval-title tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow">
-                        TRIVIA DEFENSE
-                    </h1>
-                </div>
-                <p class="text-slate-300 max-w-md text-sm md:text-base leading-relaxed">
-                    ¡Defiende tu reino respondiendo correctamente a preguntas de la Edad Media! Las monedas acumuladas te permitirán comprar objetos mágicos y personajes legendarios en el Mercado.
-                </p>
-
-                <!-- Selector de Personajes Desbloqueados -->
-                <div class="flex flex-col items-center gap-3 my-2 w-full max-w-lg">
-                    <span class="text-xs uppercase tracking-widest text-indigo-300 font-bold">Elige tu Defensor:</span>
-                    <div id="character-selector-container" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-9 gap-3 w-full justify-center">
-                        <!-- Generado dinámicamente según lo que esté desbloqueado -->
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-4 justify-center">
-                    <button id="btn-play" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-extrabold text-lg rounded-xl shadow-lg shadow-yellow-500/20 active:scale-95 transition-all flex items-center gap-3">
-                        <i class="fa-solid fa-gamepad"></i> DEFENDER REINO
-                    </button>
-                    <button id="btn-open-shop" class="px-6 py-4 bg-indigo-950 border border-indigo-500/40 hover:bg-indigo-900 text-indigo-300 font-bold text-base rounded-xl active:scale-95 transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-store"></i> ENTRAR AL MERCADO
-                    </button>
-                </div>
+               <div class="relative">
+                  <div class="absolute -inset-1 rounded-lg bg-gradient-to-r from-yellow-500 to-amber-600 blur opacity-40 glow-effect"></div>
+                  <h1 class="relative text-4xl md:text-5xl font-black medieval-title tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 drop-shadow">
+                     TRIVIA DEFENSE
+                  </h1>
+               </div>
+               <p class="text-slate-300 max-w-md text-sm md:text-base leading-relaxed">
+                  ¡Defiende tu reino respondiendo correctamente a preguntas de la Edad Media! Las monedas acumuladas te permitirán comprar objetos mágicos y personajes legendarios en el Mercado.
+               </p>
+               <!-- Selector de Personajes Desbloqueados -->
+               <div class="flex flex-col items-center gap-3 my-2 w-full max-w-lg">
+                  <span class="text-xs uppercase tracking-widest text-indigo-300 font-bold">Elige tu Defensor:</span>
+                  <div id="character-selector-container" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-9 gap-3 w-full justify-center">
+                     <!-- Generado dinámicamente según lo que esté desbloqueado -->
+                  </div>
+               </div>
+               <div class="flex flex-wrap gap-4 justify-center">
+                  <button id="btn-play" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-extrabold text-lg rounded-xl shadow-lg shadow-yellow-500/20 active:scale-95 transition-all flex items-center gap-3">
+                  <i class="fa-solid fa-gamepad"></i> DEFENDER REINO
+                  </button>
+                  <button id="btn-open-shop" class="px-6 py-4 bg-indigo-950 border border-indigo-500/40 hover:bg-indigo-900 text-indigo-300 font-bold text-base rounded-xl active:scale-95 transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-store"></i> ENTRAR AL MERCADO
+                  </button>
+               </div>
             </div>
-
             <!-- PANTALLA DE TRIVIA (PREGUNTAS) -->
             <div id="screen-question" class="hidden flex-col space-y-6">
-                <!-- Tarjeta de pregunta -->
-                <div class="bg-slate-950/40 border border-indigo-500/10 rounded-2xl p-6 shadow-inner relative">
-                    <div class="flex items-center justify-between mb-3">
-                        <span id="question-category" class="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-950/60 px-3 py-1 rounded-md border border-indigo-500/20">Categoría</span>
-                        <span id="question-index" class="text-xs text-slate-400">Pregunta 1</span>
-                    </div>
-                    <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-100 leading-snug">Cargando pregunta...</h2>
-                </div>
-
-                <!-- Opciones de respuesta -->
-                <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Los botones se generarán dinámicamente -->
-                </div>
+               <!-- Tarjeta de pregunta -->
+               <div class="bg-slate-950/40 border border-indigo-500/10 rounded-2xl p-6 shadow-inner relative">
+                  <div class="flex items-center justify-between mb-3">
+                     <span id="question-category" class="text-xs font-semibold uppercase tracking-wider text-indigo-400 bg-indigo-950/60 px-3 py-1 rounded-md border border-indigo-500/20">Categoría</span>
+                     <span id="question-index" class="text-xs text-slate-400">Pregunta 1</span>
+                  </div>
+                  <h2 id="question-text" class="text-lg md:text-xl font-bold text-slate-100 leading-snug">Cargando pregunta...</h2>
+               </div>
+               <!-- Opciones de respuesta -->
+               <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <!-- Los botones se generarán dinámicamente -->
+               </div>
             </div>
-
             <!-- PANTALLA DE FIN DE JUEGO (GAME OVER) -->
             <div id="screen-gameover" class="hidden flex-col items-center justify-center text-center space-y-6 py-4">
-                <div class="text-6xl" id="gameover-icon">🏆</div>
-                <h2 id="gameover-title" class="text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-rose-500">¡MURALLAS DESTRUIDAS!</h2>
-                
-                <div class="bg-slate-950/50 border border-indigo-500/20 rounded-2xl p-6 max-w-xs w-full shadow-inner space-y-3">
-                    <p class="text-sm text-slate-400 uppercase tracking-widest">Botín Consolidado</p>
-                    <div class="flex items-center justify-center gap-3">
-                        <span class="text-3xl">🪙</span>
-                        <span id="final-coins" class="text-4xl font-black text-yellow-400">0</span>
-                    </div>
-                    <p id="final-feedback" class="text-xs text-indigo-300 italic pt-2">¡Tus hazañas serán recordadas!</p>
-                </div>
-
-                <div class="flex gap-4">
-                    <button id="btn-restart" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-slate-100 font-extrabold text-base rounded-xl shadow-lg active:scale-95 transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-left"></i> JUGAR DE NUEVO
-                    </button>
-                    <button id="btn-over-shop" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-base rounded-xl shadow-lg active:scale-95 transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-store"></i> IR AL MERCADO
-                    </button>
-                </div>
+               <div class="text-6xl" id="gameover-icon">🏆</div>
+               <h2 id="gameover-title" class="text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-rose-500">¡MURALLAS DESTRUIDAS!</h2>
+               <div class="bg-slate-950/50 border border-indigo-500/20 rounded-2xl p-6 max-w-xs w-full shadow-inner space-y-3">
+                  <p class="text-sm text-slate-400 uppercase tracking-widest">Botín Consolidado</p>
+                  <div class="flex items-center justify-center gap-3">
+                     <span class="text-3xl">🪙</span>
+                     <span id="final-coins" class="text-4xl font-black text-yellow-400">0</span>
+                  </div>
+                  <p id="final-feedback" class="text-xs text-indigo-300 italic pt-2">¡Tus hazañas serán recordadas!</p>
+               </div>
+               <div class="flex gap-4">
+                  <button id="btn-restart" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-slate-100 font-extrabold text-base rounded-xl shadow-lg active:scale-95 transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-rotate-left"></i> JUGAR DE NUEVO
+                  </button>
+                  <button id="btn-over-shop" class="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-base rounded-xl shadow-lg active:scale-95 transition-all flex items-center gap-2">
+                  <i class="fa-solid fa-store"></i> IR AL MERCADO
+                  </button>
+               </div>
             </div>
-
-        </div>
-    </div>
-
-    <!-- MODAL DE LA TIENDA (MERCADO MEDIEVAL) -->
-    <div id="shop-modal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border-2 border-amber-500/50 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
-            
+         </div>
+      </div>
+      <!-- MODAL DE LA TIENDA (MERCADO MEDIEVAL) -->
+      <div id="shop-modal" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
+         <div class="bg-slate-900 border-2 border-amber-500/50 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
             <!-- Cabecera de la tienda -->
             <div class="bg-gradient-to-r from-amber-600 to-yellow-600 p-5 flex justify-between items-center text-slate-950">
-                <div class="flex items-center gap-3">
-                    <span class="text-3xl">🎪</span>
-                    <div>
-                        <h2 class="font-black text-xl medieval-title tracking-wide">MERCADO MEDIEVAL</h2>
-                        <p class="text-xs font-semibold opacity-90">Mejora tus defensas y recluta héroes legendarios</p>
-                    </div>
-                </div>
-                <button id="btn-close-shop" class="w-10 h-10 rounded-full bg-slate-950/20 hover:bg-slate-950/40 text-slate-950 font-black text-xl flex items-center justify-center active:scale-90 transition-all">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+               <div class="flex items-center gap-3">
+                  <span class="text-3xl">🎪</span>
+                  <div>
+                     <h2 class="font-black text-xl medieval-title tracking-wide">MERCADO MEDIEVAL</h2>
+                     <p class="text-xs font-semibold opacity-90">Mejora tus defensas y recluta héroes legendarios</p>
+                  </div>
+               </div>
+               <button id="btn-close-shop" class="w-10 h-10 rounded-full bg-slate-950/20 hover:bg-slate-950/40 text-slate-950 font-black text-xl flex items-center justify-center active:scale-90 transition-all">
+               <i class="fa-solid fa-xmark"></i>
+               </button>
             </div>
-
             <!-- Monedas Disponibles -->
             <div class="bg-slate-950/60 border-b border-indigo-500/20 px-6 py-3 flex justify-between items-center">
-                <span class="text-xs uppercase tracking-wider text-indigo-300 font-bold">Tus Arcas Reales:</span>
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🪙</span>
-                    <span id="shop-wallet" class="text-2xl font-black text-yellow-400">0</span>
-                </div>
+               <span class="text-xs uppercase tracking-wider text-indigo-300 font-bold">Tus Arcas Reales:</span>
+               <div class="flex items-center gap-2">
+                  <span class="text-xl">🪙</span>
+                  <span id="shop-wallet" class="text-2xl font-black text-yellow-400">0</span>
+               </div>
             </div>
-
             <!-- Pestañas -->
             <div class="flex border-b border-slate-800">
-                <button id="tab-objects" class="flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-amber-500 text-amber-400">
-                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> OBJETOS MÁGICOS
-                </button>
-                <button id="tab-characters" class="flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-transparent text-slate-400 hover:text-slate-200">
-                    <i class="fa-solid fa-id-card mr-2"></i> PERSONAJES
-                </button>
+               <button id="tab-objects" class="flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-amber-500 text-amber-400">
+               <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> OBJETOS MÁGICOS
+               </button>
+               <button id="tab-characters" class="flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-transparent text-slate-400 hover:text-slate-200">
+               <i class="fa-solid fa-id-card mr-2"></i> PERSONAJES
+               </button>
             </div>
-
             <!-- Contenidos del Mercado -->
             <div class="p-6 overflow-y-auto flex-1 space-y-6">
-                
-                <!-- SECCIÓN: OBJETOS -->
-                <div id="shop-objects-section" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Dinámico -->
-                </div>
-
-                <!-- SECCIÓN: PERSONAJES -->
-                <div id="shop-characters-section" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <!-- Dinámico -->
-                </div>
-
+               <!-- SECCIÓN: OBJETOS -->
+               <div id="shop-objects-section" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Dinámico -->
+               </div>
+               <!-- SECCIÓN: PERSONAJES -->
+               <div id="shop-characters-section" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  <!-- Dinámico -->
+               </div>
             </div>
-
             <!-- Pie de la tienda -->
             <div class="bg-slate-950/40 border-t border-slate-800 p-4 text-center text-xs text-indigo-400 font-semibold">
-                *Los objetos de batalla comprados se activan inmediatamente en la defensa activa.
+               *Los objetos de batalla comprados se activan inmediatamente en la defensa activa.
             </div>
-        </div>
-    </div>
-
-    <!-- Footer decorativo -->
-    <div class="text-center text-xs text-slate-500 mt-4">
-        Trivia Tower Defense &copy; 2026 • Diseñado con mecánicas roguelite y persistencia real.
-    </div>
-
-    <script>
-        // --- BASE DE DATOS DE PREGUNTAS (Adaptadas a 5º de Primaria sobre La Edad Media) ---
-        const QUESTIONS_DB = [
-{
-q: "¿Cómo se llamaba el territorio controlado por los musulmanes en la Península Ibérica durante la Edad Media?",
-a: ["Al-Ándalus", "Reino Visigodo", "Hispania Romana", "Imperio Bizantino"],
-c: 0,
-cat: "Al-Ándalus"
-},
-{
-q: "¿Quiénes eran los guerreros encargados de defender los feudos a cambio de tierras?",
-a: ["Los caballeros", "Los campesinos", "Los artesanos", "Los monjes"],
-c: 0,
-cat: "Sociedad Feudal"
-},
-{
-q: "¿Cuál era el grupo social más numeroso de la Edad Media, encargado de trabajar las tierras de los nobles?",
-a: ["Los campesinos", "Los caballeros", "El clero", "Los reyes"],
-c: 0,
-cat: "Sociedad Feudal"
-},
-{
-q: "¿Cómo se llamaba el estamento formado por obispos, sacerdotes y monjes que rezaban en los monasterios?",
-a: ["El clero", "La nobleza", "Los siervos", "Los gremios"],
-c: 0,
-cat: "La Iglesia"
-},
-{
-q: "¿Qué sistema político y social de la Edad Media se basaba en el juramento de fidelidad y el reparto de tierras?",
-a: ["El feudalismo", "La democracia", "El imperio romano", "El socialismo"],
-c: 0,
-cat: "Sociedad Feudal"
-},
-{
-q: "¿Dónde se fabricaban, copiaban e ilustraban los valiosos libros a mano antes de inventarse la imprenta?",
-a: ["En los monasterios", "En los mercados", "En las herrerías", "En las mezquitas"],
-c: 0,
-cat: "Cultura"
-},
-{
-q: "¿Qué nombre recibían las asociaciones medievales de artesanos del mismo oficio (zapateros, panaderos)?",
-a: ["Gremios", "Sindicatos", "Feudos", "Universidades"],
-c: 0,
-cat: "Ciudades"
-},
-{
-q: "¿Quiénes viajaban de castillo en castillo entreteniendo a la gente con canciones sobre grandes hazañas de caballeros?",
-a: ["Los juglares", "Los escribas", "Los obispos", "Los señores feudales"],
-c: 0,
-cat: "Cultura"
-},
-{
-q: "¿Qué majestuoso palacio y fortaleza construyeron los musulmanes en la ciudad de Granada?",
-a: ["La Alhambra", "El Acueducto", "La Catedral Gótica", "La Mezquita"],
-c: 0,
-cat: "Arte y Arquitectura"
-},
-{
-q: "¿Con qué acontecimiento histórico se inicia la Edad Media en el año 476 d.C.?",
-a: ["La caída del Imperio Romano de Occidente", "El descubrimiento de América", "La llegada de los árabes", "La coronación de Carlomagno"],
-c: 0,
-cat: "Historia"
-},
-{
-q: "¿Cómo se llamaba la fortaleza amurallada donde residía el señor feudal con sus guardias?",
-a: ["Castillo", "Monasterio", "Catedral", "Ayuntamiento"],
-c: 0,
-cat: "Arquitectura"
-},
-{
-q: "¿Qué estilo medieval se caracterizaba por altos muros, ventanas pequeñas y arcos de medio punto oscuros?",
-a: ["Románico", "Gótico", "Renacentista", "Barroco"],
-c: 0,
-cat: "Arte"
-},
-{
-q: "¿Qué estilo artístico medieval introdujo los arcos apuntados, enormes rosetones y luminosas vidrieras?",
-a: ["Gótico", "Románico", "Prerrománico", "Mudéjar"],
-c: 0,
-cat: "Arte"
-},
-{
-q: "¿Cómo llamamos a la larga campaña en la que los reinos cristianos del norte reconquistaron el sur de la Península?",
-a: ["La Reconquista", "Las Cruzadas", "La Guerra de los Cien Años", "La invasión visigoda"],
-c: 0,
-cat: "Historia"
-},
-{
-q: "¿Qué inventó Johannes Gutenberg hacia el final de la Edad Media, permitiendo multiplicar los libros?",
-a: ["La imprenta", "La brújula", "La pólvora", "El telescopio"],
-c: 0,
-cat: "Inventos"
-},
-{
-q: "¿Quiénes eran los temibles navegantes del norte de Europa que asaltaban barcos y costas medievales?",
-a: ["Los vikingos", "Los cartagineses", "Los romanos", "Los fenicios"],
-c: 0,
-cat: "Historia"
-},
-{
-q: "¿Qué rey de Castilla y León unificó la cultura medieval reuniendo a sabios cristianos, musulmanes y judíos?",
-a: ["Alfonso X el Sabio", "Don Pelayo", "Felipe II", "Jaime I el Conquistador"],
-c: 0,
-cat: "Cultura"
-},
-{
-q: "¿Cómo se llamaba la gran mezquita construida en el siglo VIII en la capital del emirato y califato de Al-Ándalus?",
-a: ["Mezquita de Córdoba", "La Giralda de Sevilla", "La Alhambra", "Mezquita de Damasco"],
-c: 0,
-cat: "Arte y Arquitectura"
-},
-{
-q: "¿Qué nuevos cultivos introdujeron los musulmanes en la Península Ibérica gracias a sus sistemas de regadío?",
-a: ["Arroz, naranja y alcachofa", "Patatas, tomates y maíz", "Trigo, cebada y vid", "Cacao, vainilla y café"],
-c: 0,
-cat: "Al-Ándalus"
-},
-{
-q: "¿Qué batalla del año 1212 supuso una victoria clave para los reinos cristianos frente al imperio almohade?",
-a: ["Batalla de las Navas de Tolosa", "Batalla de Covadonga", "Batalla de Guadalete", "Batalla de Poitiers"],
-c: 0,
-cat: "La Reconquista"
-},
-{
-q: "¿Quién fue el primer líder cristiano que inició la resistencia asturiana en la batalla de Covadonga en el año 722?",
-a: ["Don Pelayo", "Alfonso VI", "Sancho III", "Abderramán I"],
-c: 0,
-cat: "La Reconquista"
-},
-{
-q: "¿Cuál era la principal ruta de peregrinación cristiana en el norte de España durante la Edad Media?",
-a: ["El Camino de Santiago", "La Vía de la Plata", "La Calzada Romana", "La Ruta de la Seda"],
-c: 0,
-cat: "Cultura y Religión"
-},
-{
-q: "¿Quién era el gobernante supremo de Al-Ándalus cuando este territorio se independizó de Damasco en el año 929?",
-a: ["El Califa", "El Emir", "El Rey Visigodo", "El Sultán"],
-c: 0,
-cat: "Al-Ándalus"
-},
-{
-q: "¿Qué estamento medieval no tenía privilegios, pagaba impuestos y vivía del trabajo de la tierra o de la artesanía?",
-a: ["El pueblo llano", "La alta nobleza", "Los obispos", "Los caballeros"],
-c: 0,
-cat: "Sociedad Feudal"
-},
-{
-q: "¿Qué técnica agrícola consistía en dejar descansar una parte de la tierra cultivable para que recuperase nutrientes?",
-a: ["El barbecho", "La rotación trienal", "El regadío por goteo", "La quema de pastos"],
-c: 0,
-cat: "Economía Medieval"
-},
-{
-q: "¿Qué enfermedad devastadora se extendió por Europa en el año 1348, eliminando a un tercio de la población?",
-a: ["La Peste Negra", "La Gripe Común", "El Sarampión", "La Varicela"],
-c: 0,
-cat: "Historia"
-},
-{
-q: "¿Cómo se llamaba la nueva clase social que surgió en las ciudades medievales, formada por comerciantes y artesanos ricos?",
-a: ["La burguesía", "El campesinado", "El clero regular", "Los vasallos"],
-c: 0,
-cat: "Sociedad en las Ciudades"
-},
-{
-q: "¿Cuál era el principal centro de oración, copia de manuscritos y producción de alimentos en el ámbito rural medieval?",
-a: ["El monasterio", "El mercado", "La universidad", "El ayuntamiento"],
-c: 0,
-cat: "La Iglesia"
-},
-{
-q: "¿Qué metales o materiales utilizaba el herrero en la Edad Media para fabricar herraduras, rejas y espadas?",
-a: ["Hierro y bronce", "Cobre y plástico", "Oro y plata", "Aluminio"],
-c: 0,
-cat: "Oficios"
-},
-{
-q: "¿Cómo se llamaba el aprendiz de un gremio que ya dominaba el oficio pero aún no tenía su propia tienda?",
-a: ["Oficial", "Maestro", "Siervo", "Caballero"],
-c: 0,
-cat: "Gremios"
-},
-             {
-        q: "¿Qué ciudad de la Península Ibérica eligieron los visigodos como la gran capital de su reino?",
-        a: ["Toledo", "Madrid", "Barcelona", "Sevilla"],
-        c: 0,
-        cat: "Reino Visigodo"
-    },
-    {
-        q: "¿Qué rey visigodo se convirtió al catolicismo unificando religiosamente a su pueblo en el año 589?",
-        a: ["Recaredo", "Don Rodrigo", "Leovigildo", "Atanagildo"],
-        c: 0,
-        cat: "Reino Visigodo"
-    },
-    {
-        q: "¿En qué famosa batalla del año 711 fue derrotado el último rey visigodo por las tropas musulmanas?",
-        a: ["Batalla de Guadalete", "Batalla de Covadonga", "Batalla de las Navas de Tolosa", "Batalla de Poitiers"],
-        c: 0,
-        cat: "Al-Ándalus"
-    },
-    {
-        q: "¿Qué gran invento para extraer agua de los pozos y ríos introdujeron los musulmanes en los campos españoles?",
-        a: ["La noria", "La cosechadora", "El molino de viento", "El tractor de vapor"],
-        c: 0,
-        cat: "Al-Ándalus"
-    },
-    {
-        q: "¿Cómo se llamaba el mercado tradicional de las ciudades de Al-Ándalus, lleno de especias, telas y artesanos?",
-        a: ["Zoco", "Feudo", "Gremio", "Monasterio"],
-        c: 0,
-        cat: "Al-Ándalus"
-    },
-    {
-        q: "¿Qué nombre recibía el recinto amurallado de carácter militar que protegía las ciudades de Al-Ándalus?",
-        a: ["Alcazaba", "Monasterio", "Catedral", "Ayuntamiento"],
-        c: 0,
-        cat: "Arquitectura"
-    },
-    {
-        q: "¿Cómo se llamaba la sala del monasterio donde los monjes medievales pasaban horas copiando manuscritos a mano?",
-        a: ["Scriptorium", "Almena", "Refectorio", "Torre del homenaje"],
-        c: 0,
-        cat: "Cultura"
-    },
-    {
-        q: "¿Cómo se llamaba la ceremonia en la que un noble juraba fidelidad y ayuda militar al rey a cambio de tierras?",
-        a: ["Ceremonia de vasallaje", "Investidura de gremios", "Bautismo de caballeros", "Coronación del siervo"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Qué impuesto del diez por ciento de la cosecha debían pagar los campesinos obligatoriamente a la Iglesia?",
-        a: ["El diezmo", "La alcabala", "El peaje", "El tributo del rey"],
-        c: 0,
-        cat: "La Iglesia"
-    },
-    {
-        q: "¿Por qué las iglesias de estilo románico tenían ventanas muy pequeñas y muros extremadamente gruesos?",
-        a: ["Para sujetar el peso de los techos de piedra", "Para que los monjes no vieran el exterior", "Porque no sabían fabricar vidrio transparente", "Para evitar que entrara el calor del verano"],
-        c: 0,
-        cat: "Arte"
-    },
-    {
-        q: "¿Qué elemento del arte gótico permitía que las catedrales se llenaran de luz de hermosos colores?",
-        a: ["Las vidrieras", "Los arcos de medio punto", "Las pinturas al fresco", "Los muros de adobe"],
-        c: 0,
-        cat: "Arte"
-    },
-    {
-        q: "¿Cómo se llama la gran ventana circular decorada con vidrieras de colores en las fachadas de las iglesias góticas?",
-        a: ["Rosetón", "Ábside", "Almena", "Pórtico"],
-        c: 0,
-        cat: "Arte"
-    },
-    {
-        q: "¿El descubrimiento de la tumba de qué apóstol dio origen a la famosa ruta de peregrinación del norte de España?",
-        a: ["Santiago el Mayor", "San Pedro", "San Juan", "San Pablo"],
-        c: 0,
-        cat: "Cultura"
-    },
-    {
-        q: "¿De qué lengua antigua hablada en el Imperio Romano nacieron el castellano, el gallego y el catalán?",
-        a: ["El latín", "El griego", "El árabe", "El visigodo"],
-        c: 0,
-        cat: "Cultura"
-    },
-    {
-        q: "¿Cómo se llamaban las competiciones de entrenamiento donde los caballeros medievales luchaban con lanzas a caballo?",
-        a: ["Torneos o justas", "Gremios", "Cruzadas", "Romerías"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Cómo se llamaba el joven ayudante que cuidaba las armas, la armadura y el caballo de un caballero antes de ser armado?",
-        a: ["Escudero", "Juglar", "Vasallo", "Grumete"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Qué grandes eventos comerciales se organizaban una o dos veces al año en las ciudades atrayendo mercaderes lejanos?",
-        a: ["Ferias", "Justas", "Cruzadas", "Monasterios"],
-        c: 0,
-        cat: "Ciudades"
-    },
-    {
-        q: "¿Cuál era la torre principal de un castillo medieval, donde residía el señor feudal con su familia?",
-        a: ["Torre del homenaje", "Torre albarrana", "Barbacana", "Foso"],
-        c: 0,
-        cat: "Arquitectura"
-    },
-                {
-        q: "¿Quién era la máxima autoridad en Al-Ándalus, que concentraba todo el poder político y también el religioso?",
-        a: ["El califa", "El rey visigodo", "El papa de Roma", "El señor feudal"],
-        c: 0,
-        cat: "Al-Ándalus"
-    },
-    {
-        q: "¿Qué planta traída por los musulmanes revolucionó la gastronomía europea al permitir endulzar los alimentos?",
-        a: ["La caña de azúcar", "El girasol", "La patata", "La remolacha"],
-        c: 0,
-        cat: "Al-Ándalus"
-    },
-    {
-        q: "¿Qué nombre recibía la zona de tierras reservadas exclusivamente para el señor feudal, trabajadas obligatoriamente por los siervos?",
-        a: ["Reserva señorial", "Manso", "Alfoz", "Zoco"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Qué eran los 'mansos' dentro de la estructura de un gran feudo medieval?",
-        a: ["Tierras que el señor alquilaba a campesinos libres a cambio de parte de su cosecha", "Los caballos de los caballeros", "Los trajes lujosos de los nobles", "Los libros copiados por los monjes"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Cómo se llamaban los barrios situados en el exterior de las murallas de las ciudades que crecían debido al comercio?",
-        a: ["Arrabales", "Castros", "Aljamas", "Alcazabas"],
-        c: 0,
-        cat: "Ciudades"
-    },
-    {
-        q: "¿Qué institución o asamblea de concejales gobernaba y administraba el día a día de una ciudad medieval?",
-        a: ["El ayuntamiento o concejo", "El scriptorium", "El monasterio principal", "La orden militar"],
-        c: 0,
-        cat: "Ciudades"
-    },
-    {
-        q: "¿Qué elemento arquitectónico exterior, en forma de medio arco, inventó el gótico para sujetar las altísimas catedrales?",
-        a: ["Arbotante", "Arco de medio punto", "Dintel plano", "Cúpula de cañón"],
-        c: 0,
-        cat: "Arte"
-    },
-    {
-        q: "¿Qué gran imperio cristiano existió en Oriente durante la Edad Media, con su famosa capital en Constantinopla?",
-        a: ["Imperio Bizantino", "Imperio Carolingio", "Califato de Bagdad", "Sacro Imperio Romano Germánico"],
-        c: 0,
-        cat: "Historia"
-    },
-    {
-        q: "¿Cómo se llamaba la ceremonia militar donde se nombraba oficialmente a un soldado de la nobleza como caballero?",
-        a: ["Investidura de armas", "Ceremonia del diezmo", "Homenaje de vasallaje", "Coronación real"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Qué material traído por los musulmanes desde China sustituyó al caro pergamino y facilitó la escritura de manuscritos?",
-        a: ["El papel", "El papiro egipcio", "Las tablillas de arcilla", "La corteza de abedul"],
-        c: 0,
-        cat: "Inventos"
-    },
-    {
-        q: "¿Cómo se llamaba a los viajeros que realizaban largos viajes para visitar tumbas sagradas como Jerusalén o Santiago?",
-        a: ["Peregrinos", "Mercaderes", "Juglares", "Vikingos"],
-        c: 0,
-        cat: "La Iglesia"
-    },
-    {
-        q: "¿Qué rey visigodo logró la unificación territorial de casi toda la península tras conquistar a los suevos?",
-        a: ["Leovigildo", "Recaredo", "Don Rodrigo", "Don Pelayo"],
-        c: 0,
-        cat: "Reino Visigodo"
-    },
-    {
-        q: "¿Qué espectacular palacio fortificado de los reyes musulmanes se conserva en la ciudad de Zaragoza?",
-        a: ["La Aljafería", "La Alhambra", "El Alcázar", "La Mezquita de Córdoba"],
-        c: 0,
-        cat: "Arte"
-    },
-    {
-        q: "¿Qué cargo religioso ostentaba el monje principal encargado de dirigir y gobernar un monasterio?",
-        a: ["Abad", "Obispo", "Papa", "Monaguillo"],
-        c: 0,
-        cat: "La Iglesia"
-    },
-    {
-        q: "¿Qué nombre recibieron los pequeños reinos independientes en los que se dividió Al-Ándalus en el año 1031?",
-        a: ["Reinos de taifas", "Condados catalanes", "Marcas hispánicas", "Feudos de frontera"],
-        c: 0,
-        cat: "Historia"
-    },
-    {
-        q: "¿Qué instrumento de origen chino mejoró la navegación en la Edad Media al indicar siempre el norte magnético?",
-        a: ["La brújula", "El astrolabio", "El timón de popa", "El sextante"],
-        c: 0,
-        cat: "Inventos"
-    },
-    {
-        q: "¿Qué nombre recibían los campesinos que no eran libres y estaban atados a la tierra del señor feudal toda su vida?",
-        a: ["Siervos de la gleba", "Artesanos del gremio", "Caballeros andantes", "Juglares de la corte"],
-        c: 0,
-        cat: "Sociedad Feudal"
-    },
-    {
-        q: "¿Qué ruta comercial conectaba el Lejano Oriente con el Mediterráneo para traer seda, porcelana y especias?",
-        a: ["La Ruta de la Seda", "El Camino de Santiago", "La Vía de la Plata", "La Ruta del Trigo"],
-        c: 0,
-        cat: "Economía"
-    },
-    {
-        q: "¿Cómo se llamaban los bellos dibujos de colores y letras ornamentadas con las que los monjes decoraban los manuscritos?",
-        a: ["Miniaturas o iluminaciones", "Pinturas al fresco", "Vidrieras rúnicas", "Gárgolas de piedra"],
-        c: 0,
-        cat: "Cultura"
-    },
-    {
-        q: "¿Cómo se llamaba la asamblea donde el rey convocaba a nobles, clero y representantes de las ciudades por primera vez?",
-        a: ["Las Cortes", "El Concejo Municipal", "El Gremio Mayor", "La Curia Romana"],
-        c: 0,
-        cat: "Historia"
-    },
-    {
-        q: "¿Qué reyes consiguieron completar la Reconquista con la toma de Granada en el año 1492?",
-        a: ["Los Reyes Católicos", "Alfonso X y Leonor", "Los Reyes Visigodos", "Felipe II e Isabel de Valois"],
-        c: 0,
-        cat: "Historia"
-    },
-    {
-        q: "¿Qué campañas militares organizaron los reinos cristianos europeos para intentar recuperar Jerusalén (Tierra Santa)?",
-        a: ["Las Cruzadas", "La Reconquista", "La Guerra de los Cien Años", "Las invasiones bárbaras"],
-        c: 0,
-        cat: "Historia"
-    }
-];
-
-        // --- EFECTOS DE SONIDO SINTETIZADOS (Web Audio API) ---
-        class SoundEngine {
-            constructor() {
-                this.ctx = null;
-            }
-            init() {
-                if (!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-            }
-            playTone(freq, type, duration, gainStart, gainEnd = 0.001) {
-                this.init();
-                if (!this.ctx) return;
-                try {
-                    const osc = this.ctx.createOscillator();
-                    const gainNode = this.ctx.createGain();
-                    
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    
-                    gainNode.gain.setValueAtTime(gainStart, this.ctx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(gainEnd, this.ctx.currentTime + duration);
-                    
-                    osc.connect(gainNode);
-                    gainNode.connect(this.ctx.destination);
-                    
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + duration);
-                } catch (e) {
-                    console.warn("Audio no soportado o bloqueado", e);
-                }
-            }
-            coin() {
-                this.playTone(523.25, 'sine', 0.1, 0.1); // C5
-                setTimeout(() => this.playTone(659.25, 'sine', 0.2, 0.1), 80); // E5
-            }
-            shoot() {
-                this.playTone(880, 'triangle', 0.15, 0.15); // A5 descending fast
-                setTimeout(() => this.playTone(440, 'triangle', 0.1, 0.1), 50);
-            }
-            damage() {
-                this.playTone(120, 'sawtooth', 0.3, 0.3); // Low saw
-                setTimeout(() => this.playTone(80, 'sawtooth', 0.2, 0.2), 100);
-            }
-            shieldBlock() {
-                this.playTone(600, 'sine', 0.15, 0.2);
-                setTimeout(() => this.playTone(900, 'sine', 0.3, 0.2), 80);
-            }
-            magicSpell() {
-                this.playTone(880, 'sine', 0.1, 0.1);
-                setTimeout(() => this.playTone(1046.50, 'sine', 0.1, 0.1), 50);
-                setTimeout(() => this.playTone(1318.51, 'sine', 0.25, 0.1), 100);
-            }
-            correct() {
-                this.playTone(523.25, 'triangle', 0.1, 0.15);
-                setTimeout(() => this.playTone(659.25, 'triangle', 0.1, 0.15), 100);
-                setTimeout(() => this.playTone(783.99, 'triangle', 0.2, 0.15), 200);
-            }
-            buyError() {
-                this.playTone(150, 'sawtooth', 0.25, 0.25);
-            }
-            gameover() {
-                this.playTone(300, 'sawtooth', 0.4, 0.2);
-                setTimeout(() => this.playTone(220, 'sawtooth', 0.4, 0.2), 200);
-                setTimeout(() => this.playTone(150, 'sawtooth', 0.6, 0.3), 400);
-            }
-        }
-        const sfx = new SoundEngine();
-
-        // --- CONSTANTES DEL MERCADO ---
-        const ALL_CHARACTERS = [
-            { id: 'char_prince', emoji: '🤴', name: 'Príncipe', cost: 0 },
-            { id: 'char_princess', emoji: '👸', name: 'Princesa', cost: 0 },
-            { id: 'char_monarch', emoji: '🫅', name: 'Monarca', cost: 1000 },
-            { id: 'char_witch', emoji: '🧙‍♀️', name: 'Bruja', cost: 2500 },
-            { id: 'char_wizard', emoji: '🧙‍♂️', name: 'Mago', cost: 2500 },
-            { id: 'char_vamp_m', emoji: '🧛‍♂️', name: 'Vampiro', cost: 5000 },
-            { id: 'char_vamp_f', emoji: '🧛‍♀️', name: 'Vampiresa', cost: 5000 },
-            { id: 'char_elf_m', emoji: '🧝‍♂️', name: 'Elfo', cost: 7500 },
-            { id: 'char_elf_f', emoji: '🧝', name: 'Elfa', cost: 7500 }
-        ];
-
-        const ALL_ITEMS = [
-            { id: 'item_hourglass', emoji: '⌛', name: 'Reloj de arena', cost: 500, desc: 'Trol avanza 50% más lento durante 3 preguntas.' },
-            { id: 'item_brick', emoji: '🧱', name: 'Ladrillos de muralla', cost: 2000, desc: 'Repara la muralla de tu castillo 1 punto.' },
-            { id: 'item_shield', emoji: '🛡️', name: 'Escudo de caballero', cost: 1500, desc: 'Te hace inmune al siguiente fallo o tiempo agotado.' },
-            { id: 'item_swords', emoji: '⚔️', name: 'Espadas de acero', cost: 1500, desc: 'Mata al trol al instante y salta pregunta (0 monedas).' },
-            { id: 'item_crystal', emoji: '🔮', name: 'Bola de Cristal', cost: 250, desc: 'Elimina 2 respuestas incorrectas (Comodín 50/50).' }
-        ];
-
-        // --- ESTADO DEL JUEGO ---
-        let state = {
-            // Persistentes
-            totalCoins: parseInt(localStorage.getItem('ttd_total_coins')) || 0,
-            unlockedCharacters: JSON.parse(localStorage.getItem('ttd_unlocked_chars')) || ['🤴', '👸'],
-            playerCharacter: localStorage.getItem('ttd_selected_char') || '🤴',
-
-            // Estado de la partida actual
-            coins: 0,
-            lives: 5,
-            currentQuestionIndex: 0,
-            questionPool: [],
-            timeLeft: 30.0,
-            gameActive: false,
-            answeringActive: false,
-            questionActive: false, // Saber si hay una pregunta en curso (independiente de si abrimos tienda)
-            trollSpeedFactor: 1.0, // Factor de velocidad que aumenta con cada acierto
-            canvasShake: 0,
-            soldierX: 50,
-            particles: [],
-            projectiles: [],
-            
-            // Consumibles activos en la ronda
-            activeSlowdownQuestions: 0,
-            hasShield: false
-        };
-
-        // --- ELEMENTOS DEL DOM ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const hudCoins = document.getElementById('hud-coins');
-        const hudLives = document.getElementById('hud-lives');
-        const hudTimer = document.getElementById('hud-timer');
-        const screenStart = document.getElementById('screen-start');
-        const screenQuestion = document.getElementById('screen-question');
-        const screenGameOver = document.getElementById('screen-gameover');
-        const damageFlash = document.getElementById('damage-flash');
-        const actionOverlay = document.getElementById('action-overlay');
-        const actionText = document.getElementById('action-text');
-
-        // Botones e Indicadores
-        const btnPlay = document.getElementById('btn-play');
-        const btnRestart = document.getElementById('btn-restart');
-        const btnOpenShop = document.getElementById('btn-open-shop');
-        const btnOverShop = document.getElementById('btn-over-shop');
-        const btnInGameShop = document.getElementById('btn-ingame-shop');
-        const btnCloseShop = document.getElementById('btn-close-shop');
-        const shopModal = document.getElementById('shop-modal');
-        const shopWallet = document.getElementById('shop-wallet');
-
-        const indicatorHourglass = document.getElementById('indicator-hourglass');
-        const hourglassCount = document.getElementById('hourglass-count');
-        const indicatorShield = document.getElementById('indicator-shield');
-
-        const answersContainer = document.getElementById('answers-container');
-        const questionText = document.getElementById('question-text');
-        const questionCategory = document.getElementById('question-category');
-        const questionIndex = document.getElementById('question-index');
-
-        // Pestañas de la tienda
-        const tabObjects = document.getElementById('tab-objects');
-        const tabCharacters = document.getElementById('tab-characters');
-        const shopObjectsSection = document.getElementById('shop-objects-section');
-        const shopCharactersSection = document.getElementById('shop-characters-section');
-
-        // --- ADAPTACIÓN DE CANVAS ---
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // --- PERSISTENCIA LOCAL ---
-        function saveToStorage() {
-            localStorage.setItem('ttd_total_coins', state.totalCoins);
-            localStorage.setItem('ttd_unlocked_chars', JSON.stringify(state.unlockedCharacters));
-            localStorage.setItem('ttd_selected_char', state.playerCharacter);
-        }
-
-        // --- SISTEMA DE PARTÍCULAS ---
-        function createExplosion(x, y, color, count = 15) {
-            for (let i = 0; i < count; i++) {
-                state.particles.push({
-                    x: x,
-                    y: y,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6 - 2,
-                    radius: Math.random() * 4 + 2,
-                    color: color,
-                    alpha: 1,
-                    decay: Math.random() * 0.02 + 0.01
-                });
-            }
-        }
-
-        function createCoinSplash(x, y) {
-            for (let i = 0; i < 8; i++) {
-                state.particles.push({
-                    x: x,
-                    y: y,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: -Math.random() * 5 - 2,
-                    radius: 6,
-                    isCoin: true,
-                    alpha: 1,
-                    decay: 0.015
-                });
-            }
-        }
-
-        // --- LOOP DE RENDERIZADO DEL LIENZO ---
-        function render() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Efecto de sacudida (Screen Shake)
-            let shakeX = 0;
-            let shakeY = 0;
-            if (state.canvasShake > 0) {
-                shakeX = (Math.random() - 0.5) * state.canvasShake;
-                shakeY = (Math.random() - 0.5) * state.canvasShake;
-                state.canvasShake *= 0.9;
-                if (state.canvasShake < 0.5) state.canvasShake = 0;
-            }
-
-            ctx.save();
-            ctx.translate(shakeX, shakeY);
-
-            // Estrellas decorativas
-            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-            for (let i = 0; i < 15; i++) {
-                let starX = (Math.sin(i * 123) * 0.5 + 0.5) * canvas.width;
-                let starY = (Math.cos(i * 456) * 0.5 + 0.5) * (canvas.height - 60);
-                ctx.fillRect(starX, starY, 2, 2);
-            }
-
-            // Colinas de fondo
-            ctx.fillStyle = '#0f1d3a';
-            ctx.beginPath();
-            ctx.moveTo(0, canvas.height);
-            ctx.quadraticCurveTo(canvas.width * 0.3, canvas.height - 70, canvas.width * 0.6, canvas.height - 30);
-            ctx.quadraticCurveTo(canvas.width * 0.8, canvas.height - 50, canvas.width, canvas.height - 35);
-            ctx.lineTo(canvas.width, canvas.height);
-            ctx.fill();
-
-            // Camino
-            ctx.fillStyle = '#1e293b';
-            ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
-            ctx.fillStyle = '#334155';
-            ctx.fillRect(0, canvas.height - 40, canvas.width, 4);
-
-            // --- CASTILLO (Derecha) ---
-            const castleX = canvas.width - 90;
-            const castleY = canvas.height - 95;
-
-            // Piedra según la resistencia de muralla
-            ctx.fillStyle = state.lives <= 2 ? '#475569' : '#64748b';
-
-            // Torre Principal
-            ctx.fillRect(castleX, castleY, 60, 70);
-            ctx.fillRect(castleX - 5, castleY, 10, 15);
-            ctx.fillRect(castleX + 15, castleY - 10, 30, 10);
-            ctx.fillRect(castleX + 55, castleY, 10, 15);
-
-            // Ventana interior
-            ctx.fillStyle = '#1e1b4b';
-            ctx.fillRect(castleX + 20, castleY + 30, 20, 40);
-            
-            ctx.fillStyle = state.lives > 0 ? '#fbbf24' : '#1e293b';
-            ctx.beginPath();
-            ctx.arc(castleX + 30, castleY + 35, 8, Math.PI, 0);
-            ctx.fill();
-
-            // Banderín
-            ctx.fillStyle = state.lives > 2 ? '#ef4444' : '#64748b';
-            ctx.beginPath();
-            ctx.moveTo(castleX + 30, castleY - 10);
-            ctx.lineTo(castleX + 55, castleY - 18);
-            ctx.lineTo(castleX + 30, castleY - 25);
-            ctx.fill();
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(castleX + 30, castleY - 10);
-            ctx.lineTo(castleX + 30, castleY - 25);
-            ctx.stroke();
-
-            // Dibujar Héroe defensor en la almena
-            if (state.lives > 0) {
-                ctx.font = '22px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(state.playerCharacter, castleX + 14, castleY - 6);
-            }
-
-            // Grietas de daño
-            if (state.lives < 5) {
-                ctx.strokeStyle = '#0f172a';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(castleX + 10, castleY + 15);
-                ctx.lineTo(castleX + 25, castleY + 25);
-                ctx.lineTo(castleX + 18, castleY + 45);
-                ctx.stroke();
-            }
-            if (state.lives < 3) {
-                ctx.beginPath();
-                ctx.moveTo(castleX + 50, castleY + 10);
-                ctx.lineTo(castleX + 40, castleY + 30);
-                ctx.lineTo(castleX + 55, castleY + 50);
-                ctx.stroke();
-            }
-
-            // --- TORRE DE DEFENSA ---
-            const towerX = canvas.width - 150;
-            const towerY = canvas.height - 85;
-            ctx.fillStyle = '#334155';
-            ctx.fillRect(towerX, towerY, 30, 50);
-            ctx.fillStyle = '#475569';
-            ctx.fillRect(towerX - 5, towerY - 5, 40, 12);
-            ctx.font = '24px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('🏹', towerX + 15, towerY - 10);
-
-            // --- ESCUDO RÚNICO (EFECTO VISUAL) ---
-            if (state.hasShield && state.lives > 0) {
-                ctx.save();
-                ctx.globalAlpha = 0.4 + Math.sin(Date.now() * 0.007) * 0.15;
-                ctx.strokeStyle = '#60a5fa';
-                ctx.lineWidth = 5;
-                ctx.fillStyle = 'rgba(96, 165, 250, 0.1)';
-                ctx.beginPath();
-                ctx.arc(castleX + 30, castleY + 35, 75, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-                ctx.restore();
-            }
-
-            // --- TROL ENEMIGO (🧌) ---
-            if (state.gameActive && state.lives > 0) {
-                const startX = 30;
-                const endTarget = castleX - 25;
-                const progress = (30 - state.timeLeft) / 30;
-                state.soldierX = startX + progress * (endTarget - startX);
-
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-                ctx.beginPath();
-                ctx.ellipse(state.soldierX, canvas.height - 25, 16, 6, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.save();
-                // Animación de caminata más lenta si el reloj de arena está activo
-                const animSpeed = state.activeSlowdownQuestions > 0 ? 0.007 : 0.015;
-                const bobbing = Math.sin(Date.now() * animSpeed) * 4;
-                ctx.translate(state.soldierX, canvas.height - 45 + bobbing);
-                
-                ctx.font = '34px sans-serif';
-                ctx.fillText('🧌', 0, 0);
-
-                // Efecto visual de hielo/relajamiento si el reloj de arena ralentiza al trol
-                if (state.activeSlowdownQuestions > 0) {
-                    ctx.font = '16px sans-serif';
-                    ctx.fillText('❄️', 12, -25);
-                }
-
-                ctx.fillStyle = '#1e293b';
-                ctx.fillRect(-15, -35, 30, 4);
-                ctx.fillStyle = state.activeSlowdownQuestions > 0 ? '#38bdf8' : '#f43f5e';
-                ctx.fillRect(-15, -35, 30 * (state.timeLeft / 30), 4);
-
-                ctx.restore();
-            }
-
-            // --- ACTUALIZAR Y DIBUJAR PROYECTILES ---
-            for (let i = state.projectiles.length - 1; i >= 0; i--) {
-                const proj = state.projectiles[i];
-                const dx = proj.targetX - proj.x;
-                const dy = proj.targetY - proj.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < 8) {
-                    createExplosion(proj.targetX, proj.targetY, '#f59e0b', 20);
-                    createCoinSplash(proj.targetX, proj.targetY);
-                    state.projectiles.splice(i, 1);
-                } else {
-                    const speed = 15;
-                    proj.x += (dx / dist) * speed;
-                    proj.y += (dy / dist) * speed;
-
-                    const angle = Math.atan2(dy, dx);
-                    ctx.save();
-                    ctx.translate(proj.x, proj.y);
-                    ctx.rotate(angle);
-
-                    ctx.strokeStyle = '#d1d5db';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.moveTo(-15, 0);
-                    ctx.lineTo(15, 0);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#64748b';
-                    ctx.beginPath();
-                    ctx.moveTo(15, 0);
-                    ctx.lineTo(7, -4);
-                    ctx.lineTo(7, 4);
-                    ctx.fill();
-
-                    ctx.strokeStyle = '#38bdf8';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(-15, 0);
-                    ctx.lineTo(-19, -4);
-                    ctx.moveTo(-11, 0);
-                    ctx.lineTo(-15, -4);
-                    ctx.moveTo(-15, 0);
-                    ctx.lineTo(-19, 4);
-                    ctx.moveTo(-11, 0);
-                    ctx.lineTo(-15, 4);
-                    ctx.stroke();
-
-                    ctx.restore();
-
-                    if (Math.random() > 0.4) {
-                        state.particles.push({
-                            x: proj.x - (dx / dist) * 15,
-                            y: proj.y - (dy / dist) * 15,
-                            vx: (Math.random() - 0.5) * 1,
-                            vy: (Math.random() - 0.5) * 1,
-                            radius: Math.random() * 2 + 1,
-                            color: '#e2e8f0',
-                            alpha: 0.6,
-                            decay: 0.08
-                        });
-                    }
-                }
-            }
-
-            // --- ACTUALIZAR Y DIBUJAR PARTÍCULAS ---
-            for (let i = state.particles.length - 1; i >= 0; i--) {
-                const p = state.particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-                p.alpha -= p.decay;
-
-                if (p.alpha <= 0) {
-                    state.particles.splice(i, 1);
-                } else {
-                    ctx.save();
-                    ctx.globalAlpha = p.alpha;
-                    if (p.isCoin) {
-                        ctx.fillStyle = '#fbbf24';
-                        ctx.strokeStyle = '#d97706';
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.stroke();
-                        ctx.fillStyle = '#fff';
-                        ctx.font = '8px sans-serif';
-                        ctx.fillText('$', p.x, p.y + 3);
-                    } else {
-                        ctx.fillStyle = p.color;
-                        ctx.beginPath();
-                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                    ctx.restore();
-                }
-            }
-
-            ctx.restore();
-            requestAnimationFrame(render);
-        }
-
-        // --- CONTROL DE TIEMPO DE RESPUESTA ---
-        let timerInterval = null;
-
-        function startTimer() {
-            clearInterval(timerInterval);
-            state.timeLeft = 30.0;
-            hudTimer.textContent = `${state.timeLeft.toFixed(1)}s`;
-            
-            timerInterval = setInterval(() => {
-                if (!state.gameActive || !state.answeringActive) return;
-                
-                // Ralentización del 50% con Reloj de Arena, y factor de velocidad acumulado del trol
-                let speedMultiplier = state.trollSpeedFactor;
-                if (state.activeSlowdownQuestions > 0) {
-                    speedMultiplier *= 0.5;
-                }
-                
-                const timeStep = 0.1 * speedMultiplier;
-                state.timeLeft -= timeStep;
-                
-                if (state.timeLeft <= 0) {
-                    state.timeLeft = 0;
-                    hudTimer.textContent = "0.0s";
-                    clearInterval(timerInterval);
-                    handleAnswerTimeout();
-                } else {
-                    hudTimer.textContent = `${state.timeLeft.toFixed(1)}s`;
-                }
-            }, 100);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        // --- SISTEMA DE PREGUNTAS (TRIVIA) ---
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        function loadNextQuestion() {
-            if (state.lives <= 0) {
-                endGame();
-                return;
-            }
-
-            if (state.currentQuestionIndex >= state.questionPool.length) {
-                state.currentQuestionIndex = 0;
-                shuffleArray(state.questionPool);
-            }
-
-            const currentQ = state.questionPool[state.currentQuestionIndex];
-            state.answeringActive = true;
-            state.questionActive = true;
-
-            questionCategory.textContent = currentQ.cat;
-            questionIndex.textContent = `Pregunta ${state.currentQuestionIndex + 1}`;
-            questionText.textContent = currentQ.q;
-
-            const options = currentQ.a.map((option, index) => {
-                return { text: option, isCorrect: index === currentQ.c };
-            });
-            shuffleArray(options);
-
-            answersContainer.innerHTML = '';
-            options.forEach(opt => {
-                const button = document.createElement('button');
-                button.className = "answer-button w-full text-left px-5 py-4 bg-slate-900 border border-indigo-500/20 hover:border-indigo-500/60 hover:bg-slate-800 rounded-xl transition-all duration-150 font-medium text-slate-200 shadow hover:shadow-indigo-500/10 active:scale-[0.98]";
-                button.dataset.correct = opt.isCorrect;
-                button.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <span class="step-num w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-indigo-400">
-                            <i class="fa-solid fa-chess-rook text-[10px]"></i>
-                        </span>
-                        <span>${opt.text}</span>
-                    </div>
-                `;
-                button.onclick = () => selectAnswer(button, opt.isCorrect);
-                answersContainer.appendChild(button);
-            });
-
-            startTimer();
-        }
-
-        // --- PROCESAMIENTO DE RESPUESTAS ---
-        function selectAnswer(selectedButton, isCorrect) {
-            if (!state.answeringActive) return;
-            state.answeringActive = false;
-            state.questionActive = false;
-            stopTimer();
-
-            const buttons = answersContainer.querySelectorAll('button');
-            buttons.forEach(btn => btn.disabled = true);
-
-            // Reducir contador del Reloj de Arena al finalizar la pregunta
-            if (state.activeSlowdownQuestions > 0) {
-                state.activeSlowdownQuestions--;
-                updateActiveEffectsIndicators();
-            }
-
-            if (isCorrect) {
-                handleCorrectAnswer(selectedButton);
-            } else {
-                handleIncorrectAnswer(selectedButton);
-            }
-        }
-
-        // RESPUESTA CORRECTA
-        function handleCorrectAnswer(selectedButton) {
-            sfx.correct();
-            
-            selectedButton.classList.remove('bg-slate-900', 'border-indigo-500/20');
-            selectedButton.classList.add('bg-emerald-950/80', 'border-emerald-500/80', 'text-emerald-300');
-            selectedButton.querySelector('.step-num').classList.add('bg-emerald-900', 'border-emerald-500');
-
-            // Monedas proporcionales al tiempo
-            const scoreEarned = Math.max(10, Math.round(state.timeLeft * 5));
-            state.coins += scoreEarned;
-            
-            // Se suman también al monedero permanente real
-            state.totalCoins += scoreEarned;
-            saveToStorage();
-            
-            hudCoins.textContent = state.coins;
-
-            // Aumentar progresivamente la velocidad de los troles
-            state.trollSpeedFactor += 0.08; 
-            document.getElementById('hud-speed').textContent = `${Math.round(state.trollSpeedFactor * 100)}%`;
-
-            // Disparar proyectil
-            sfx.shoot();
-            state.projectiles.push({
-                x: canvas.width - 150,
-                y: canvas.height - 95,
-                targetX: state.soldierX,
-                targetY: canvas.height - 45
-            });
-
-            actionText.textContent = `¡CORRECTO! +${scoreEarned}🪙`;
-            actionText.className = "text-emerald-400 font-extrabold text-3xl md:text-5xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
-            actionOverlay.classList.remove('opacity-0', 'scale-50');
-            actionOverlay.classList.add('opacity-100', 'scale-100');
-
-            setTimeout(() => {
-                actionOverlay.classList.remove('opacity-100', 'scale-100');
-                actionOverlay.classList.add('opacity-0', 'scale-50');
-                
-                state.currentQuestionIndex++;
-                loadNextQuestion();
-            }, 1800);
-        }
-
-        // RESPUESTA INCORRECTA
-        function handleIncorrectAnswer(selectedButton) {
-            selectedButton.classList.remove('bg-slate-900', 'border-indigo-500/20');
-            selectedButton.classList.add('bg-rose-950/80', 'border-rose-500/80', 'text-rose-300');
-            selectedButton.querySelector('.step-num').classList.add('bg-rose-900', 'border-rose-500');
-
-            const buttons = answersContainer.querySelectorAll('button');
-            const currentQ = state.questionPool[state.currentQuestionIndex];
-            const correctText = currentQ.a[currentQ.c];
-            
-            buttons.forEach(btn => {
-                if (btn.innerText.includes(correctText)) {
-                    btn.classList.add('bg-emerald-950/40', 'border-emerald-500/40', 'text-emerald-400');
-                }
-            });
-
-            triggerCastleDamage("¡FALLO!");
-        }
-
-        // EXPANSIÓN DEL TIEMPO (TIMEOUT)
-        function handleAnswerTimeout() {
-            state.answeringActive = false;
-            state.questionActive = false;
-            
-            if (state.activeSlowdownQuestions > 0) {
-                state.activeSlowdownQuestions--;
-                updateActiveEffectsIndicators();
-            }
-
-            const buttons = answersContainer.querySelectorAll('button');
-            buttons.forEach(btn => btn.disabled = true);
-
-            triggerCastleDamage("¡TIEMPO AGOTADO!");
-        }
-
-        // IMPACTO AL CASTILLO
-        function triggerCastleDamage(reasonText) {
-            // COMPROBAR SI HAY ESCUDO ACTIVO
-            if (state.hasShield) {
-                state.hasShield = false;
-                updateActiveEffectsIndicators();
-                sfx.shieldBlock();
-
-                // Animación de escudo bloqueando
-                actionText.textContent = `🛡️ ¡ESCUDO ABSORBIÓ DAÑO!`;
-                actionText.className = "text-blue-400 font-extrabold text-2xl md:text-4xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
-                actionOverlay.classList.remove('opacity-0', 'scale-50');
-                actionOverlay.classList.add('opacity-100', 'scale-100');
-
-                // Partículas del escudo
-                createExplosion(canvas.width - 60, canvas.height - 60, '#60a5fa', 30);
-
-                setTimeout(() => {
-                    actionOverlay.classList.remove('opacity-100', 'scale-100');
-                    actionOverlay.classList.add('opacity-0', 'scale-50');
-                    state.currentQuestionIndex++;
-                    loadNextQuestion();
-                }, 2000);
-                return;
-            }
-
-            // Daño normal si no hay escudo
-            sfx.damage();
-            state.lives--;
-            updateLivesHUD();
-
-            const castleX = canvas.width - 90;
-            const castleY = canvas.height - 80;
-            createExplosion(castleX, castleY, '#475569', 25);
-            createExplosion(castleX + 30, castleY + 20, '#f43f5e', 15);
-
-            state.canvasShake = 15;
-
-            damageFlash.classList.remove('bg-red-600/0');
-            damageFlash.classList.add('bg-red-600/30');
-            setTimeout(() => {
-                damageFlash.classList.remove('bg-red-600/30');
-                damageFlash.classList.add('bg-red-600/0');
-            }, 300);
-
-            actionText.textContent = `${reasonText} 🛡️-1`;
-            actionText.className = "text-rose-500 font-extrabold text-3xl md:text-5xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
-            actionOverlay.classList.remove('opacity-0', 'scale-50');
-            actionOverlay.classList.add('opacity-100', 'scale-100');
-
-            setTimeout(() => {
-                actionOverlay.classList.remove('opacity-100', 'scale-100');
-                actionOverlay.classList.add('opacity-0', 'scale-50');
-
-                if (state.lives <= 0) {
-                    endGame();
-                } else {
-                    state.currentQuestionIndex++;
-                    loadNextQuestion();
-                }
-            }, 2000);
-        }
-
-        // --- REFRESCAR ELEMENTOS VISUALES ---
-        function updateLivesHUD() {
-            hudLives.innerHTML = '';
-            for (let i = 0; i < 5; i++) {
-                const shield = document.createElement('i');
-                if (i < state.lives) {
-                    shield.className = "fa-solid fa-shield-halved text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]";
-                } else {
-                    shield.className = "fa-solid fa-shield-halved text-slate-700";
-                }
-                hudLives.appendChild(shield);
-            }
-        }
-
-        function updateActiveEffectsIndicators() {
-            if (state.activeSlowdownQuestions > 0) {
-                indicatorHourglass.classList.remove('hidden');
-                indicatorHourglass.classList.add('flex');
-                hourglassCount.textContent = state.activeSlowdownQuestions;
-            } else {
-                indicatorHourglass.classList.add('hidden');
-                indicatorHourglass.classList.remove('flex');
-            }
-
-            if (state.hasShield) {
-                indicatorShield.classList.remove('hidden');
-                indicatorShield.classList.add('flex');
-            } else {
-                indicatorShield.classList.add('hidden');
-                indicatorShield.classList.remove('flex');
-            }
-        }
-
-        // --- CONTROL DEL MERCADO (TIENDA MODAL) ---
-        function openShop() {
-            // Pausar partida si está activa
-            if (state.gameActive && state.answeringActive) {
-                stopTimer();
-                state.answeringActive = false;
-            }
-            
-            sfx.coin();
-            renderShopObjects();
-            renderShopCharacters();
-            
-            shopWallet.textContent = state.gameActive ? state.coins : state.totalCoins;
-            shopModal.classList.remove('hidden');
-        }
-
-        function closeShop() {
-            shopModal.classList.add('hidden');
-            sfx.coin();
-
-            // Reanudar partida
-            if (state.gameActive && !state.answeringActive && state.lives > 0 && state.questionActive) {
-                state.answeringActive = true;
-                startTimer();
-            }
-            
-            // Refrescar selector de inicio
-            renderCharacterSelector();
-        }
-
-        // RENDERIZAR OBJETOS EN TIENDA
-        function renderShopObjects() {
-            shopObjectsSection.innerHTML = '';
-            
-            // Las monedas que el usuario gasta en partida provienen de su botín de la ronda activa.
-            // Si está fuera de partida, usa su "Monedero Real" (totalCoins).
-            const currentBalance = state.gameActive ? state.coins : state.totalCoins;
-
-            ALL_ITEMS.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-950/80 border border-indigo-500/20 rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-all";
-                
-                const isAffordable = currentBalance >= item.cost;
-                
-                // Ciertas restricciones tácticas de compra
-                let canBuy = isAffordable;
-                let errorMsg = "";
-
-                if (!state.gameActive) {
-                    canBuy = false;
-                    errorMsg = "Sólo en defensa";
-                } else if (item.id === 'item_brick' && state.lives >= 5) {
-                    canBuy = false;
-                    errorMsg = "Murallas al 100%";
-                } else if (item.id === 'item_shield' && state.hasShield) {
-                    canBuy = false;
-                    errorMsg = "Ya tienes un escudo";
-                } else if ((item.id === 'item_swords' || item.id === 'item_crystal') && !state.questionActive) {
-                    canBuy = false;
-                    errorMsg = "Espera pregunta";
-                }
-
-                card.innerHTML = `
-                    <div class="flex gap-3">
-                        <span class="text-3xl p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-center h-12 w-12">${item.emoji}</span>
-                        <div>
-                            <h4 class="font-extrabold text-slate-100 text-sm">${item.name}</h4>
-                            <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">${item.desc}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between mt-4 border-t border-slate-900 pt-3">
-                        <div class="flex items-center gap-1 font-bold text-yellow-400 text-sm">
-                            <span>🪙</span> ${item.cost}
-                        </div>
-                        <button class="buy-item-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all ${canBuy ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 active:scale-95' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}" 
-                                ${canBuy ? '' : 'disabled'}>
-                            ${errorMsg ? errorMsg : 'COMPRAR'}
-                        </button>
-                    </div>
-                `;
-
-                if (canBuy) {
-                    card.querySelector('.buy-item-btn').onclick = () => buyItem(item);
-                }
-                shopObjectsSection.appendChild(card);
-            });
-        }
-
-        // RENDERIZAR PERSONAJES EN TIENDA
-        function renderShopCharacters() {
-            shopCharactersSection.innerHTML = '';
-            const currentBalance = state.gameActive ? state.coins : state.totalCoins;
-
-            ALL_CHARACTERS.forEach(char => {
-                const card = document.createElement('div');
-                const isUnlocked = state.unlockedCharacters.includes(char.emoji);
-                const isAffordable = currentBalance >= char.cost;
-                const isSelected = state.playerCharacter === char.emoji;
-
-                card.className = `bg-slate-950/80 border rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-all ${isSelected ? 'border-amber-500/80 ring-1 ring-amber-500/30' : 'border-indigo-500/20'}`;
-
-                card.innerHTML = `
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <span class="text-4xl mb-1">${char.emoji}</span>
-                        <h4 class="font-bold text-slate-200 text-xs">${char.name}</h4>
-                    </div>
-                    <div class="flex flex-col items-center justify-center mt-3 border-t border-slate-900 pt-3 w-full">
-                        ${isUnlocked ? `
-                            <button class="select-char-btn w-full py-1 rounded-lg text-[10px] font-black tracking-wider transition-all ${isSelected ? 'bg-indigo-950 border border-indigo-500/60 text-indigo-300' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 active:scale-95'}" ${isSelected ? 'disabled' : ''}>
-                                ${isSelected ? 'ACTIVO' : 'EQUIPAR'}
-                            </button>
-                        ` : `
-                            <button class="buy-char-btn w-full py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 active:scale-95 rounded-lg text-[10px] font-black transition-all flex items-center justify-center gap-1 ${isAffordable ? '' : 'opacity-50 cursor-not-allowed'}" ${isAffordable ? '' : 'disabled'}>
-                                🪙 ${char.cost}
-                            </button>
-                        `}
-                    </div>
-                `;
-
-                if (isUnlocked && !isSelected) {
-                    card.querySelector('.select-char-btn').onclick = () => {
-                        state.playerCharacter = char.emoji;
-                        saveToStorage();
-                        sfx.coin();
-                        renderShopCharacters();
-                    };
-                } else if (!isUnlocked) {
-                    card.querySelector('.buy-char-btn').onclick = () => {
-                        if (isAffordable) {
-                            buyCharacter(char);
-                        } else {
-                            sfx.buyError();
-                        }
-                    };
-                }
-
-                shopCharactersSection.appendChild(card);
-            });
-        }
-
-        // COMPRAR OBJETO
-        function buyItem(item) {
-            // Descontar saldo
-            if (state.gameActive) {
-                state.coins -= item.cost;
-                state.totalCoins -= item.cost;
-                hudCoins.textContent = state.coins;
-            } else {
-                state.totalCoins -= item.cost;
-            }
-            saveToStorage();
-            shopWallet.textContent = state.gameActive ? state.coins : state.totalCoins;
-
-            sfx.magicSpell();
-
-            // EJECUTAR EFECTO AL INSTANTE
-            if (item.id === 'item_hourglass') {
-                state.activeSlowdownQuestions += 3;
-                updateActiveEffectsIndicators();
-            } else if (item.id === 'item_brick') {
-                state.lives = Math.min(5, state.lives + 1);
-                updateLivesHUD();
-                // Partículas flotantes de reparación
-                createExplosion(canvas.width - 60, canvas.height - 50, '#10b981', 15);
-            } else if (item.id === 'item_shield') {
-                state.hasShield = true;
-                updateActiveEffectsIndicators();
-            } else if (item.id === 'item_swords') {
-                executeSwordsInstantKill();
-                closeShop();
-                return; // Evita refresco de tienda ya que cerró
-            } else if (item.id === 'item_crystal') {
-                executeCrystalBall5050();
-                closeShop();
-                return; // Evita refresco de tienda ya que cerró
-            }
-
-            renderShopObjects();
-        }
-
-        // COMPRAR PERSONAJE PERMANENTE
-        function buyCharacter(char) {
-            if (state.gameActive) {
-                state.coins -= char.cost;
-                state.totalCoins -= char.cost;
-                hudCoins.textContent = state.coins;
-            } else {
-                state.totalCoins -= char.cost;
-            }
-            state.unlockedCharacters.push(char.emoji);
-            state.playerCharacter = char.emoji; // Equipa automáticamente
-            
-            saveToStorage();
-            sfx.correct();
-
-            shopWallet.textContent = state.gameActive ? state.coins : state.totalCoins;
-            renderShopCharacters();
-        }
-
-        // --- EFECTO: ESPADAS GEMELAS (INSTANT KILL) ---
-        function executeSwordsInstantKill() {
-            if (!state.questionActive) return;
-            state.answeringActive = false;
-            state.questionActive = false;
-            stopTimer();
-
-            // Animación de flecha masiva
-            sfx.shoot();
-            state.projectiles.push({
-                x: canvas.width - 150,
-                y: canvas.height - 95,
-                targetX: state.soldierX,
-                targetY: canvas.height - 45
-            });
-
-            actionText.textContent = "⚔️ ¡ENEMIGO ELIMINADO!";
-            actionText.className = "text-amber-400 font-extrabold text-2xl md:text-4xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
-            actionOverlay.classList.remove('opacity-0', 'scale-50');
-            actionOverlay.classList.add('opacity-100', 'scale-100');
-
-            setTimeout(() => {
-                actionOverlay.classList.remove('opacity-100', 'scale-100');
-                actionOverlay.classList.add('opacity-0', 'scale-50');
-                
-                state.currentQuestionIndex++;
-                loadNextQuestion();
-            }, 1800);
-        }
-
-        // EFECTO: BOLA DE CRISTAL (50/50)
-        function executeCrystalBall5050() {
-            if (!state.questionActive) return;
-
-            const buttons = Array.from(answersContainer.querySelectorAll('button'));
-            const incorrectButtons = buttons.filter(btn => btn.dataset.correct === "false");
-            
-            // Barajar incorrectas y deshabilitar 2
-            shuffleArray(incorrectButtons);
-            for (let i = 0; i < Math.min(2, incorrectButtons.length); i++) {
-                incorrectButtons[i].disabled = true;
-                incorrectButtons[i].classList.add('opacity-30', 'pointer-events-none');
-            }
-        }
-
-        // --- RENDER DEL SELECTOR DE INICIO ---
-        function renderCharacterSelector() {
-            const container = document.getElementById('character-selector-container');
-            container.innerHTML = '';
-
-            ALL_CHARACTERS.forEach(char => {
-                const isUnlocked = state.unlockedCharacters.includes(char.emoji);
-                const isSelected = state.playerCharacter === char.emoji;
-
-                const button = document.createElement('button');
-                button.className = `w-14 h-14 rounded-xl flex items-center justify-center text-2xl transition-all relative ${isUnlocked ? 'bg-slate-950/60 border-2 cursor-pointer active:scale-95' : 'bg-slate-950/40 border-2 border-slate-800/40 opacity-40 cursor-default'} ${isSelected ? 'border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)] scale-105' : 'border-indigo-500/20'}`;
-                button.innerHTML = char.emoji;
-
-                if (!isUnlocked) {
-                    // Mostrar candado pequeño
-                    const lock = document.createElement('span');
-                    lock.className = "absolute -bottom-1 -right-1 bg-slate-900 border border-slate-700 w-5 h-5 rounded-full flex items-center justify-center text-[8px] text-amber-500";
-                    lock.innerHTML = `<i class="fa-solid fa-lock"></i>`;
-                    button.appendChild(lock);
-                }
-
-                if (isUnlocked) {
-                    button.onclick = () => {
-                        state.playerCharacter = char.emoji;
-                        saveToStorage();
-                        sfx.coin();
-                        renderCharacterSelector();
-                    };
-                }
-
-                container.appendChild(button);
-            });
-        }
-
-        // --- INICIAR PARTIDA ---
-        function startGame() {
-            state.questionPool = [...QUESTIONS_DB];
-            shuffleArray(state.questionPool);
-            
-            state.coins = 0;
-            state.lives = 5;
-            state.currentQuestionIndex = 0;
-            state.gameActive = true;
-            state.projectiles = [];
-            state.particles = [];
-            state.activeSlowdownQuestions = 0;
-            state.hasShield = false;
-            state.trollSpeedFactor = 1.0;
-            state.questionActive = false;
-
-            hudCoins.textContent = "0";
-            document.getElementById('hud-speed').textContent = "100%";
-            updateLivesHUD();
-            updateActiveEffectsIndicators();
-
-            screenStart.classList.add('hidden');
-            screenGameOver.classList.add('hidden');
-            btnInGameShop.classList.remove('hidden');
-            screenQuestion.classList.remove('hidden');
-
-            loadNextQuestion();
-        }
-
-        // --- FINALIZAR PARTIDA ---
-        function endGame() {
-            state.gameActive = false;
-            stopTimer();
-            sfx.gameover();
-
-            screenQuestion.classList.add('hidden');
-            btnInGameShop.classList.add('hidden');
-            screenGameOver.classList.remove('hidden');
-
-            const finalCoinsElement = document.getElementById('final-coins');
-            finalCoinsElement.textContent = state.coins;
-
-            const gameoverTitle = document.getElementById('gameover-title');
-            const gameoverIcon = document.getElementById('gameover-icon');
-            const finalFeedback = document.getElementById('final-feedback');
-
-            // Feedback dinámico según rendimiento histórico
-            if (state.coins >= 1000) {
-                gameoverTitle.textContent = "¡REINO SALVADO!";
-                gameoverTitle.className = "text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-yellow-400 animate-bounce";
-                gameoverIcon.textContent = "🏆";
-                finalFeedback.textContent = "¡Un conocimiento insuperable! El castillo ha permanecido en pie.";
-            } else if (state.coins >= 100) {
-                gameoverTitle.textContent = "¡VICTORIA DEFENSIVA!";
-                gameoverTitle.className = "text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-amber-400";
-                gameoverIcon.textContent = "🛡️";
-                finalFeedback.textContent = "¡Muy buena defensa táctica, el rey te felicita!";
-            } else {
-                gameoverTitle.textContent = "¡MURALLAS DESTRUIDAS!";
-                gameoverTitle.className = "text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-rose-500";
-                gameoverIcon.textContent = "🧌";
-                finalFeedback.textContent = "¡Los troles rompieron la defensa! Prepárate mejor e inténtalo de nuevo.";
-            }
-        }
-
-        // --- ASOCIACIÓN DE EVENTOS DEL DOM ---
+         </div>
+      </div>
+      <!-- Footer decorativo -->
+      <div class="text-center text-xs text-slate-500 mt-4">
+         Trivia Tower Defense &copy; 2026 • Diseñado con mecánicas roguelite y persistencia real.
+      </div>
+      <script>
+         // --- BASE DE DATOS DE PREGUNTAS (Adaptadas a 5º de Primaria sobre La Edad Media) ---
+         const QUESTIONS_DB = [
+         {
+         q: "¿Cómo se llamaba el territorio controlado por los musulmanes en la Península Ibérica durante la Edad Media?",
+         a: ["Al-Ándalus", "Reino Visigodo", "Hispania Romana", "Imperio Bizantino"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Quiénes eran los guerreros encargados de defender los feudos a cambio de tierras?",
+         a: ["Los caballeros", "Los campesinos", "Los artesanos", "Los monjes"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Cuál era el grupo social más numeroso de la Edad Media, encargado de trabajar las tierras de los nobles?",
+         a: ["Los campesinos", "Los caballeros", "El clero", "Los reyes"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Cómo se llamaba el estamento formado por obispos, sacerdotes y monjes que rezaban en los monasterios?",
+         a: ["El clero", "La nobleza", "Los siervos", "Los gremios"],
+         c: 0,
+         cat: "La Iglesia"
+         },
+         {
+         q: "¿Qué sistema político y social de la Edad Media se basaba en el juramento de fidelidad y el reparto de tierras?",
+         a: ["El feudalismo", "La democracia", "El imperio romano", "El socialismo"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Dónde se fabricaban, copiaban e ilustraban los valiosos libros a mano antes de inventarse la imprenta?",
+         a: ["En los monasterios", "En los mercados", "En las herrerías", "En las mezquitas"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿Qué nombre recibían las asociaciones medievales de artesanos del mismo oficio (zapateros, panaderos)?",
+         a: ["Gremios", "Sindicatos", "Feudos", "Universidades"],
+         c: 0,
+         cat: "Ciudades"
+         },
+         {
+         q: "¿Quiénes viajaban de castillo en castillo entreteniendo a la gente con canciones sobre grandes hazañas de caballeros?",
+         a: ["Los juglares", "Los escribas", "Los obispos", "Los señores feudales"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿Qué majestuoso palacio y fortaleza construyeron los musulmanes en la ciudad de Granada?",
+         a: ["La Alhambra", "El Acueducto", "La Catedral Gótica", "La Mezquita"],
+         c: 0,
+         cat: "Arte y Arquitectura"
+         },
+         {
+         q: "¿Con qué acontecimiento histórico se inicia la Edad Media en el año 476 d.C.?",
+         a: ["La caída del Imperio Romano de Occidente", "El descubrimiento de América", "La llegada de los árabes", "La coronación de Carlomagno"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Cómo se llamaba la fortaleza amurallada donde residía el señor feudal con sus guardias?",
+         a: ["Castillo", "Monasterio", "Catedral", "Ayuntamiento"],
+         c: 0,
+         cat: "Arquitectura"
+         },
+         {
+         q: "¿Qué estilo medieval se caracterizaba por altos muros, ventanas pequeñas y arcos de medio punto oscuros?",
+         a: ["Románico", "Gótico", "Renacentista", "Barroco"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿Qué estilo artístico medieval introdujo los arcos apuntados, enormes rosetones y luminosas vidrieras?",
+         a: ["Gótico", "Románico", "Prerrománico", "Mudéjar"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿Cómo llamamos a la larga campaña en la que los reinos cristianos del norte reconquistaron el sur de la Península?",
+         a: ["La Reconquista", "Las Cruzadas", "La Guerra de los Cien Años", "La invasión visigoda"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Qué inventó Johannes Gutenberg hacia el final de la Edad Media, permitiendo multiplicar los libros?",
+         a: ["La imprenta", "La brújula", "La pólvora", "El telescopio"],
+         c: 0,
+         cat: "Inventos"
+         },
+         {
+         q: "¿Quiénes eran los temibles navegantes del norte de Europa que asaltaban barcos y costas medievales?",
+         a: ["Los vikingos", "Los cartagineses", "Los romanos", "Los fenicios"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Qué rey de Castilla y León unificó la cultura medieval reuniendo a sabios cristianos, musulmanes y judíos?",
+         a: ["Alfonso X el Sabio", "Don Pelayo", "Felipe II", "Jaime I el Conquistador"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿Cómo se llamaba la gran mezquita construida en el siglo VIII en la capital del emirato y califato de Al-Ándalus?",
+         a: ["Mezquita de Córdoba", "La Giralda de Sevilla", "La Alhambra", "Mezquita de Damasco"],
+         c: 0,
+         cat: "Arte y Arquitectura"
+         },
+         {
+         q: "¿Qué nuevos cultivos introdujeron los musulmanes en la Península Ibérica gracias a sus sistemas de regadío?",
+         a: ["Arroz, naranja y alcachofa", "Patatas, tomates y maíz", "Trigo, cebada y vid", "Cacao, vainilla y café"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Qué batalla del año 1212 supuso una victoria clave para los reinos cristianos frente al imperio almohade?",
+         a: ["Batalla de las Navas de Tolosa", "Batalla de Covadonga", "Batalla de Guadalete", "Batalla de Poitiers"],
+         c: 0,
+         cat: "La Reconquista"
+         },
+         {
+         q: "¿Quién fue el primer líder cristiano que inició la resistencia asturiana en la batalla de Covadonga en el año 722?",
+         a: ["Don Pelayo", "Alfonso VI", "Sancho III", "Abderramán I"],
+         c: 0,
+         cat: "La Reconquista"
+         },
+         {
+         q: "¿Cuál era la principal ruta de peregrinación cristiana en el norte de España durante la Edad Media?",
+         a: ["El Camino de Santiago", "La Vía de la Plata", "La Calzada Romana", "La Ruta de la Seda"],
+         c: 0,
+         cat: "Cultura y Religión"
+         },
+         {
+         q: "¿Quién era el gobernante supremo de Al-Ándalus cuando este territorio se independizó de Damasco en el año 929?",
+         a: ["El Califa", "El Emir", "El Rey Visigodo", "El Sultán"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Qué estamento medieval no tenía privilegios, pagaba impuestos y vivía del trabajo de la tierra o de la artesanía?",
+         a: ["El pueblo llano", "La alta nobleza", "Los obispos", "Los caballeros"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Qué técnica agrícola consistía en dejar descansar una parte de la tierra cultivable para que recuperase nutrientes?",
+         a: ["El barbecho", "La rotación trienal", "El regadío por goteo", "La quema de pastos"],
+         c: 0,
+         cat: "Economía Medieval"
+         },
+         {
+         q: "¿Qué enfermedad devastadora se extendió por Europa en el año 1348, eliminando a un tercio de la población?",
+         a: ["La Peste Negra", "La Gripe Común", "El Sarampión", "La Varicela"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Cómo se llamaba la nueva clase social que surgió en las ciudades medievales, formada por comerciantes y artesanos ricos?",
+         a: ["La burguesía", "El campesinado", "El clero regular", "Los vasallos"],
+         c: 0,
+         cat: "Sociedad en las Ciudades"
+         },
+         {
+         q: "¿Cuál era el principal centro de oración, copia de manuscritos y producción de alimentos en el ámbito rural medieval?",
+         a: ["El monasterio", "El mercado", "La universidad", "El ayuntamiento"],
+         c: 0,
+         cat: "La Iglesia"
+         },
+         {
+         q: "¿Qué metales o materiales utilizaba el herrero en la Edad Media para fabricar herraduras, rejas y espadas?",
+         a: ["Hierro y bronce", "Cobre y plástico", "Oro y plata", "Aluminio"],
+         c: 0,
+         cat: "Oficios"
+         },
+         {
+         q: "¿Cómo se llamaba el aprendiz de un gremio que ya dominaba el oficio pero aún no tenía su propia tienda?",
+         a: ["Oficial", "Maestro", "Siervo", "Caballero"],
+         c: 0,
+         cat: "Gremios"
+         },
+              {
+         q: "¿Qué ciudad de la Península Ibérica eligieron los visigodos como la gran capital de su reino?",
+         a: ["Toledo", "Madrid", "Barcelona", "Sevilla"],
+         c: 0,
+         cat: "Reino Visigodo"
+         },
+         {
+         q: "¿Qué rey visigodo se convirtió al catolicismo unificando religiosamente a su pueblo en el año 589?",
+         a: ["Recaredo", "Don Rodrigo", "Leovigildo", "Atanagildo"],
+         c: 0,
+         cat: "Reino Visigodo"
+         },
+         {
+         q: "¿En qué famosa batalla del año 711 fue derrotado el último rey visigodo por las tropas musulmanas?",
+         a: ["Batalla de Guadalete", "Batalla de Covadonga", "Batalla de las Navas de Tolosa", "Batalla de Poitiers"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Qué gran invento para extraer agua de los pozos y ríos introdujeron los musulmanes en los campos españoles?",
+         a: ["La noria", "La cosechadora", "El molino de viento", "El tractor de vapor"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Cómo se llamaba el mercado tradicional de las ciudades de Al-Ándalus, lleno de especias, telas y artesanos?",
+         a: ["Zoco", "Feudo", "Gremio", "Monasterio"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Qué nombre recibía el recinto amurallado de carácter militar que protegía las ciudades de Al-Ándalus?",
+         a: ["Alcazaba", "Monasterio", "Catedral", "Ayuntamiento"],
+         c: 0,
+         cat: "Arquitectura"
+         },
+         {
+         q: "¿Cómo se llamaba la sala del monasterio donde los monjes medievales pasaban horas copiando manuscritos a mano?",
+         a: ["Scriptorium", "Almena", "Refectorio", "Torre del homenaje"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿Cómo se llamaba la ceremonia en la que un noble juraba fidelidad y ayuda militar al rey a cambio de tierras?",
+         a: ["Ceremonia de vasallaje", "Investidura de gremios", "Bautismo de caballeros", "Coronación del siervo"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Qué impuesto del diez por ciento de la cosecha debían pagar los campesinos obligatoriamente a la Iglesia?",
+         a: ["El diezmo", "La alcabala", "El peaje", "El tributo del rey"],
+         c: 0,
+         cat: "La Iglesia"
+         },
+         {
+         q: "¿Por qué las iglesias de estilo románico tenían ventanas muy pequeñas y muros extremadamente gruesos?",
+         a: ["Para sujetar el peso de los techos de piedra", "Para que los monjes no vieran el exterior", "Porque no sabían fabricar vidrio transparente", "Para evitar que entrara el calor del verano"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿Qué elemento del arte gótico permitía que las catedrales se llenaran de luz de hermosos colores?",
+         a: ["Las vidrieras", "Los arcos de medio punto", "Las pinturas al fresco", "Los muros de adobe"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿Cómo se llama la gran ventana circular decorada con vidrieras de colores en las fachadas de las iglesias góticas?",
+         a: ["Rosetón", "Ábside", "Almena", "Pórtico"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿El descubrimiento de la tumba de qué apóstol dio origen a la famosa ruta de peregrinación del norte de España?",
+         a: ["Santiago el Mayor", "San Pedro", "San Juan", "San Pablo"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿De qué lengua antigua hablada en el Imperio Romano nacieron el castellano, el gallego y el catalán?",
+         a: ["El latín", "El griego", "El árabe", "El visigodo"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿Cómo se llamaban las competiciones de entrenamiento donde los caballeros medievales luchaban con lanzas a caballo?",
+         a: ["Torneos o justas", "Gremios", "Cruzadas", "Romerías"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Cómo se llamaba el joven ayudante que cuidaba las armas, la armadura y el caballo de un caballero antes de ser armado?",
+         a: ["Escudero", "Juglar", "Vasallo", "Grumete"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Qué grandes eventos comerciales se organizaban una o dos veces al año en las ciudades atrayendo mercaderes lejanos?",
+         a: ["Ferias", "Justas", "Cruzadas", "Monasterios"],
+         c: 0,
+         cat: "Ciudades"
+         },
+         {
+         q: "¿Cuál era la torre principal de un castillo medieval, donde residía el señor feudal con su familia?",
+         a: ["Torre del homenaje", "Torre albarrana", "Barbacana", "Foso"],
+         c: 0,
+         cat: "Arquitectura"
+         },
+                 {
+         q: "¿Quién era la máxima autoridad en Al-Ándalus, que concentraba todo el poder político y también el religioso?",
+         a: ["El califa", "El rey visigodo", "El papa de Roma", "El señor feudal"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Qué planta traída por los musulmanes revolucionó la gastronomía europea al permitir endulzar los alimentos?",
+         a: ["La caña de azúcar", "El girasol", "La patata", "La remolacha"],
+         c: 0,
+         cat: "Al-Ándalus"
+         },
+         {
+         q: "¿Qué nombre recibía la zona de tierras reservadas exclusivamente para el señor feudal, trabajadas obligatoriamente por los siervos?",
+         a: ["Reserva señorial", "Manso", "Alfoz", "Zoco"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Qué eran los 'mansos' dentro de la estructura de un gran feudo medieval?",
+         a: ["Tierras que el señor alquilaba a campesinos libres a cambio de parte de su cosecha", "Los caballos de los caballeros", "Los trajes lujosos de los nobles", "Los libros copiados por los monjes"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Cómo se llamaban los barrios situados en el exterior de las murallas de las ciudades que crecían debido al comercio?",
+         a: ["Arrabales", "Castros", "Aljamas", "Alcazabas"],
+         c: 0,
+         cat: "Ciudades"
+         },
+         {
+         q: "¿Qué institución o asamblea de concejales gobernaba y administraba el día a día de una ciudad medieval?",
+         a: ["El ayuntamiento o concejo", "El scriptorium", "El monasterio principal", "La orden militar"],
+         c: 0,
+         cat: "Ciudades"
+         },
+         {
+         q: "¿Qué elemento arquitectónico exterior, en forma de medio arco, inventó el gótico para sujetar las altísimas catedrales?",
+         a: ["Arbotante", "Arco de medio punto", "Dintel plano", "Cúpula de cañón"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿Qué gran imperio cristiano existió en Oriente durante la Edad Media, con su famosa capital en Constantinopla?",
+         a: ["Imperio Bizantino", "Imperio Carolingio", "Califato de Bagdad", "Sacro Imperio Romano Germánico"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Cómo se llamaba la ceremonia militar donde se nombraba oficialmente a un soldado de la nobleza como caballero?",
+         a: ["Investidura de armas", "Ceremonia del diezmo", "Homenaje de vasallaje", "Coronación real"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Qué material traído por los musulmanes desde China sustituyó al caro pergamino y facilitó la escritura de manuscritos?",
+         a: ["El papel", "El papiro egipcio", "Las tablillas de arcilla", "La corteza de abedul"],
+         c: 0,
+         cat: "Inventos"
+         },
+         {
+         q: "¿Cómo se llamaba a los viajeros que realizaban largos viajes para visitar tumbas sagradas como Jerusalén o Santiago?",
+         a: ["Peregrinos", "Mercaderes", "Juglares", "Vikingos"],
+         c: 0,
+         cat: "La Iglesia"
+         },
+         {
+         q: "¿Qué rey visigodo logró la unificación territorial de casi toda la península tras conquistar a los suevos?",
+         a: ["Leovigildo", "Recaredo", "Don Rodrigo", "Don Pelayo"],
+         c: 0,
+         cat: "Reino Visigodo"
+         },
+         {
+         q: "¿Qué espectacular palacio fortificado de los reyes musulmanes se conserva en la ciudad de Zaragoza?",
+         a: ["La Aljafería", "La Alhambra", "El Alcázar", "La Mezquita de Córdoba"],
+         c: 0,
+         cat: "Arte"
+         },
+         {
+         q: "¿Qué cargo religioso ostentaba el monje principal encargado de dirigir y gobernar un monasterio?",
+         a: ["Abad", "Obispo", "Papa", "Monaguillo"],
+         c: 0,
+         cat: "La Iglesia"
+         },
+         {
+         q: "¿Qué nombre recibieron los pequeños reinos independientes en los que se dividió Al-Ándalus en el año 1031?",
+         a: ["Reinos de taifas", "Condados catalanes", "Marcas hispánicas", "Feudos de frontera"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Qué instrumento de origen chino mejoró la navegación en la Edad Media al indicar siempre el norte magnético?",
+         a: ["La brújula", "El astrolabio", "El timón de popa", "El sextante"],
+         c: 0,
+         cat: "Inventos"
+         },
+         {
+         q: "¿Qué nombre recibían los campesinos que no eran libres y estaban atados a la tierra del señor feudal toda su vida?",
+         a: ["Siervos de la gleba", "Artesanos del gremio", "Caballeros andantes", "Juglares de la corte"],
+         c: 0,
+         cat: "Sociedad Feudal"
+         },
+         {
+         q: "¿Qué ruta comercial conectaba el Lejano Oriente con el Mediterráneo para traer seda, porcelana y especias?",
+         a: ["La Ruta de la Seda", "El Camino de Santiago", "La Vía de la Plata", "La Ruta del Trigo"],
+         c: 0,
+         cat: "Economía"
+         },
+         {
+         q: "¿Cómo se llamaban los bellos dibujos de colores y letras ornamentadas con las que los monjes decoraban los manuscritos?",
+         a: ["Miniaturas o iluminaciones", "Pinturas al fresco", "Vidrieras rúnicas", "Gárgolas de piedra"],
+         c: 0,
+         cat: "Cultura"
+         },
+         {
+         q: "¿Cómo se llamaba la asamblea donde el rey convocaba a nobles, clero y representantes de las ciudades por primera vez?",
+         a: ["Las Cortes", "El Concejo Municipal", "El Gremio Mayor", "La Curia Romana"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Qué reyes consiguieron completar la Reconquista con la toma de Granada en el año 1492?",
+         a: ["Los Reyes Católicos", "Alfonso X y Leonor", "Los Reyes Visigodos", "Felipe II e Isabel de Valois"],
+         c: 0,
+         cat: "Historia"
+         },
+         {
+         q: "¿Qué campañas militares organizaron los reinos cristianos europeos para intentar recuperar Jerusalén (Tierra Santa)?",
+         a: ["Las Cruzadas", "La Reconquista", "La Guerra de los Cien Años", "Las invasiones bárbaras"],
+         c: 0,
+         cat: "Historia"
+         }
+         ];
+         
+         // --- EFECTOS DE SONIDO SINTETIZADOS (Web Audio API) ---
+         class SoundEngine {
+             constructor() {
+                 this.ctx = null;
+             }
+             init() {
+                 if (!this.ctx) {
+                     this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                 }
+             }
+             playTone(freq, type, duration, gainStart, gainEnd = 0.001) {
+                 this.init();
+                 if (!this.ctx) return;
+                 try {
+                     const osc = this.ctx.createOscillator();
+                     const gainNode = this.ctx.createGain();
+                     
+                     osc.type = type;
+                     osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                     
+                     gainNode.gain.setValueAtTime(gainStart, this.ctx.currentTime);
+                     gainNode.gain.exponentialRampToValueAtTime(gainEnd, this.ctx.currentTime + duration);
+                     
+                     osc.connect(gainNode);
+                     gainNode.connect(this.ctx.destination);
+                     
+                     osc.start();
+                     osc.stop(this.ctx.currentTime + duration);
+                 } catch (e) {
+                     console.warn("Audio no soportado o bloqueado", e);
+                 }
+             }
+             coin() {
+                 this.playTone(523.25, 'sine', 0.1, 0.1); // C5
+                 setTimeout(() => this.playTone(659.25, 'sine', 0.2, 0.1), 80); // E5
+             }
+             shoot() {
+                 this.playTone(880, 'triangle', 0.15, 0.15); // A5 descending fast
+                 setTimeout(() => this.playTone(440, 'triangle', 0.1, 0.1), 50);
+             }
+             damage() {
+                 this.playTone(120, 'sawtooth', 0.3, 0.3); // Low saw
+                 setTimeout(() => this.playTone(80, 'sawtooth', 0.2, 0.2), 100);
+             }
+             shieldBlock() {
+                 this.playTone(600, 'sine', 0.15, 0.2);
+                 setTimeout(() => this.playTone(900, 'sine', 0.3, 0.2), 80);
+             }
+             magicSpell() {
+                 this.playTone(880, 'sine', 0.1, 0.1);
+                 setTimeout(() => this.playTone(1046.50, 'sine', 0.1, 0.1), 50);
+                 setTimeout(() => this.playTone(1318.51, 'sine', 0.25, 0.1), 100);
+             }
+             correct() {
+                 this.playTone(523.25, 'triangle', 0.1, 0.15);
+                 setTimeout(() => this.playTone(659.25, 'triangle', 0.1, 0.15), 100);
+                 setTimeout(() => this.playTone(783.99, 'triangle', 0.2, 0.15), 200);
+             }
+             buyError() {
+                 this.playTone(150, 'sawtooth', 0.25, 0.25);
+             }
+             gameover() {
+                 this.playTone(300, 'sawtooth', 0.4, 0.2);
+                 setTimeout(() => this.playTone(220, 'sawtooth', 0.4, 0.2), 200);
+                 setTimeout(() => this.playTone(150, 'sawtooth', 0.6, 0.3), 400);
+             }
+         }
+         const sfx = new SoundEngine();
+         
+         // --- CONSTANTES DEL MERCADO ---
+         const ALL_CHARACTERS = [
+             { id: 'char_prince', emoji: '🤴', name: 'Príncipe', cost: 0 },
+             { id: 'char_princess', emoji: '👸', name: 'Princesa', cost: 0 },
+             { id: 'char_monarch', emoji: '🫅', name: 'Monarca', cost: 1000 },
+             { id: 'char_witch', emoji: '🧙‍♀️', name: 'Bruja', cost: 2500 },
+             { id: 'char_wizard', emoji: '🧙‍♂️', name: 'Mago', cost: 2500 },
+             { id: 'char_vamp_m', emoji: '🧛‍♂️', name: 'Vampiro', cost: 5000 },
+             { id: 'char_vamp_f', emoji: '🧛‍♀️', name: 'Vampiresa', cost: 5000 },
+             { id: 'char_elf_m', emoji: '🧝‍♂️', name: 'Elfo', cost: 7500 },
+             { id: 'char_elf_f', emoji: '🧝', name: 'Elfa', cost: 7500 }
+         ];
+         
+         const ALL_ITEMS = [
+             { id: 'item_hourglass', emoji: '⌛', name: 'Reloj de arena', cost: 500, desc: 'Trol avanza 50% más lento durante 3 preguntas.' },
+             { id: 'item_brick', emoji: '🧱', name: 'Ladrillos de muralla', cost: 2000, desc: 'Repara la muralla de tu castillo 1 punto.' },
+             { id: 'item_shield', emoji: '🛡️', name: 'Escudo de caballero', cost: 1500, desc: 'Te hace inmune al siguiente fallo o tiempo agotado.' },
+             { id: 'item_swords', emoji: '⚔️', name: 'Espadas de acero', cost: 1500, desc: 'Mata al trol al instante y salta pregunta (0 monedas).' },
+             { id: 'item_crystal', emoji: '🔮', name: 'Bola de Cristal', cost: 250, desc: 'Elimina 2 respuestas incorrectas (Comodín 50/50).' }
+         ];
+         
+         // --- ESTADO DEL JUEGO ---
+         let state = {
+             // Persistentes
+             totalCoins: parseInt(localStorage.getItem('ttd_total_coins')) || 0,
+             unlockedCharacters: JSON.parse(localStorage.getItem('ttd_unlocked_chars')) || ['🤴', '👸'],
+             playerCharacter: localStorage.getItem('ttd_selected_char') || '🤴',
+         
+             // Estado de la partida actual
+             coins: 0,
+             lives: 5,
+             currentQuestionIndex: 0,
+             questionPool: [],
+             timeLeft: 30.0,
+             gameActive: false,
+             answeringActive: false,
+             questionActive: false, // Saber si hay una pregunta en curso (independiente de si abrimos tienda)
+             trollSpeedFactor: 1.0, // Factor de velocidad que aumenta con cada acierto
+             canvasShake: 0,
+             soldierX: 50,
+             particles: [],
+             projectiles: [],
+             
+             // Consumibles activos en la ronda
+             activeSlowdownQuestions: 0,
+             hasShield: false
+         };
+         
+         // --- ELEMENTOS DEL DOM ---
+         const canvas = document.getElementById('gameCanvas');
+         const ctx = canvas.getContext('2d');
+         const hudCoins = document.getElementById('hud-coins');
+         const hudLives = document.getElementById('hud-lives');
+         const hudTimer = document.getElementById('hud-timer');
+         const screenStart = document.getElementById('screen-start');
+         const screenQuestion = document.getElementById('screen-question');
+         const screenGameOver = document.getElementById('screen-gameover');
+         const damageFlash = document.getElementById('damage-flash');
+         const actionOverlay = document.getElementById('action-overlay');
+         const actionText = document.getElementById('action-text');
+         
+         // Botones e Indicadores
+         const btnPlay = document.getElementById('btn-play');
+         const btnRestart = document.getElementById('btn-restart');
+         const btnOpenShop = document.getElementById('btn-open-shop');
+         const btnOverShop = document.getElementById('btn-over-shop');
+         const btnInGameShop = document.getElementById('btn-ingame-shop');
+         const btnCloseShop = document.getElementById('btn-close-shop');
+         const shopModal = document.getElementById('shop-modal');
+         const shopWallet = document.getElementById('shop-wallet');
+         
+          // --- CONTROL DE MÚSICA DE FONDO ---
+         const bgm = document.getElementById('bgm-audio');
+         const btnToggleMusic = document.getElementById('btn-toggle-music');
+         const musicIcon = document.getElementById('music-icon');
+         let isMusicPlaying = false;
+
+         bgm.volume = 0.3; // Volumen al 30% para no tapar los efectos SFX
+
+         function toggleMusic() {
+             if (isMusicPlaying) {
+                 bgm.pause();
+                 musicIcon.className = "fa-solid fa-volume-xmark text-rose-400";
+             } else {
+                 bgm.play().then(() => {
+                     musicIcon.className = "fa-solid fa-music text-emerald-400";
+                 }).catch(err => console.warn("Reproducción bloqueada por el navegador:", err));
+             }
+             isMusicPlaying = !isMusicPlaying;
+         }
+
+         btnToggleMusic.addEventListener('click', toggleMusic);
+         
+         const indicatorHourglass = document.getElementById('indicator-hourglass');
+         const hourglassCount = document.getElementById('hourglass-count');
+         const indicatorShield = document.getElementById('indicator-shield');
+         
+         const answersContainer = document.getElementById('answers-container');
+         const questionText = document.getElementById('question-text');
+         const questionCategory = document.getElementById('question-category');
+         const questionIndex = document.getElementById('question-index');
+         
+         // Pestañas de la tienda
+         const tabObjects = document.getElementById('tab-objects');
+         const tabCharacters = document.getElementById('tab-characters');
+         const shopObjectsSection = document.getElementById('shop-objects-section');
+         const shopCharactersSection = document.getElementById('shop-characters-section');
+         
+         // --- ADAPTACIÓN DE CANVAS ---
+         function resizeCanvas() {
+             canvas.width = canvas.parentElement.clientWidth;
+             canvas.height = canvas.parentElement.clientHeight;
+         }
+         window.addEventListener('resize', resizeCanvas);
+         resizeCanvas();
+         
+         // --- PERSISTENCIA LOCAL ---
+         function saveToStorage() {
+             localStorage.setItem('ttd_total_coins', state.totalCoins);
+             localStorage.setItem('ttd_unlocked_chars', JSON.stringify(state.unlockedCharacters));
+             localStorage.setItem('ttd_selected_char', state.playerCharacter);
+         }
+         
+         // --- SISTEMA DE PARTÍCULAS ---
+         function createExplosion(x, y, color, count = 15) {
+             for (let i = 0; i < count; i++) {
+                 state.particles.push({
+                     x: x,
+                     y: y,
+                     vx: (Math.random() - 0.5) * 6,
+                     vy: (Math.random() - 0.5) * 6 - 2,
+                     radius: Math.random() * 4 + 2,
+                     color: color,
+                     alpha: 1,
+                     decay: Math.random() * 0.02 + 0.01
+                 });
+             }
+         }
+         
+         function createCoinSplash(x, y) {
+             for (let i = 0; i < 8; i++) {
+                 state.particles.push({
+                     x: x,
+                     y: y,
+                     vx: (Math.random() - 0.5) * 4,
+                     vy: -Math.random() * 5 - 2,
+                     radius: 6,
+                     isCoin: true,
+                     alpha: 1,
+                     decay: 0.015
+                 });
+             }
+         }
+         
+         // --- LOOP DE RENDERIZADO DEL LIENZO ---
+         function render() {
+             ctx.clearRect(0, 0, canvas.width, canvas.height);
+         
+             // Efecto de sacudida (Screen Shake)
+             let shakeX = 0;
+             let shakeY = 0;
+             if (state.canvasShake > 0) {
+                 shakeX = (Math.random() - 0.5) * state.canvasShake;
+                 shakeY = (Math.random() - 0.5) * state.canvasShake;
+                 state.canvasShake *= 0.9;
+                 if (state.canvasShake < 0.5) state.canvasShake = 0;
+             }
+         
+             ctx.save();
+             ctx.translate(shakeX, shakeY);
+         
+             // Estrellas decorativas
+             ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+             for (let i = 0; i < 15; i++) {
+                 let starX = (Math.sin(i * 123) * 0.5 + 0.5) * canvas.width;
+                 let starY = (Math.cos(i * 456) * 0.5 + 0.5) * (canvas.height - 60);
+                 ctx.fillRect(starX, starY, 2, 2);
+             }
+         
+             // Colinas de fondo
+             ctx.fillStyle = '#0f1d3a';
+             ctx.beginPath();
+             ctx.moveTo(0, canvas.height);
+             ctx.quadraticCurveTo(canvas.width * 0.3, canvas.height - 70, canvas.width * 0.6, canvas.height - 30);
+             ctx.quadraticCurveTo(canvas.width * 0.8, canvas.height - 50, canvas.width, canvas.height - 35);
+             ctx.lineTo(canvas.width, canvas.height);
+             ctx.fill();
+         
+             // Camino
+             ctx.fillStyle = '#1e293b';
+             ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+             ctx.fillStyle = '#334155';
+             ctx.fillRect(0, canvas.height - 40, canvas.width, 4);
+         
+             // --- CASTILLO (Derecha) ---
+             const castleX = canvas.width - 90;
+             const castleY = canvas.height - 95;
+         
+             // Piedra según la resistencia de muralla
+             ctx.fillStyle = state.lives <= 2 ? '#475569' : '#64748b';
+         
+             // Torre Principal
+             ctx.fillRect(castleX, castleY, 60, 70);
+             ctx.fillRect(castleX - 5, castleY, 10, 15);
+             ctx.fillRect(castleX + 15, castleY - 10, 30, 10);
+             ctx.fillRect(castleX + 55, castleY, 10, 15);
+         
+             // Ventana interior
+             ctx.fillStyle = '#1e1b4b';
+             ctx.fillRect(castleX + 20, castleY + 30, 20, 40);
+             
+             ctx.fillStyle = state.lives > 0 ? '#fbbf24' : '#1e293b';
+             ctx.beginPath();
+             ctx.arc(castleX + 30, castleY + 35, 8, Math.PI, 0);
+             ctx.fill();
+         
+             // Banderín
+             ctx.fillStyle = state.lives > 2 ? '#ef4444' : '#64748b';
+             ctx.beginPath();
+             ctx.moveTo(castleX + 30, castleY - 10);
+             ctx.lineTo(castleX + 55, castleY - 18);
+             ctx.lineTo(castleX + 30, castleY - 25);
+             ctx.fill();
+             ctx.strokeStyle = '#94a3b8';
+             ctx.lineWidth = 3;
+             ctx.beginPath();
+             ctx.moveTo(castleX + 30, castleY - 10);
+             ctx.lineTo(castleX + 30, castleY - 25);
+             ctx.stroke();
+         
+             // Dibujar Héroe defensor en la almena
+             if (state.lives > 0) {
+                 ctx.font = '22px sans-serif';
+                 ctx.textAlign = 'center';
+                 ctx.fillText(state.playerCharacter, castleX + 14, castleY - 6);
+             }
+         
+             // Grietas de daño
+             if (state.lives < 5) {
+                 ctx.strokeStyle = '#0f172a';
+                 ctx.lineWidth = 2;
+                 ctx.beginPath();
+                 ctx.moveTo(castleX + 10, castleY + 15);
+                 ctx.lineTo(castleX + 25, castleY + 25);
+                 ctx.lineTo(castleX + 18, castleY + 45);
+                 ctx.stroke();
+             }
+             if (state.lives < 3) {
+                 ctx.beginPath();
+                 ctx.moveTo(castleX + 50, castleY + 10);
+                 ctx.lineTo(castleX + 40, castleY + 30);
+                 ctx.lineTo(castleX + 55, castleY + 50);
+                 ctx.stroke();
+             }
+         
+             // --- TORRE DE DEFENSA ---
+             const towerX = canvas.width - 150;
+             const towerY = canvas.height - 85;
+             ctx.fillStyle = '#334155';
+             ctx.fillRect(towerX, towerY, 30, 50);
+             ctx.fillStyle = '#475569';
+             ctx.fillRect(towerX - 5, towerY - 5, 40, 12);
+             ctx.font = '24px sans-serif';
+             ctx.textAlign = 'center';
+             ctx.fillText('🏹', towerX + 15, towerY - 10);
+         
+             // --- ESCUDO RÚNICO (EFECTO VISUAL) ---
+             if (state.hasShield && state.lives > 0) {
+                 ctx.save();
+                 ctx.globalAlpha = 0.4 + Math.sin(Date.now() * 0.007) * 0.15;
+                 ctx.strokeStyle = '#60a5fa';
+                 ctx.lineWidth = 5;
+                 ctx.fillStyle = 'rgba(96, 165, 250, 0.1)';
+                 ctx.beginPath();
+                 ctx.arc(castleX + 30, castleY + 35, 75, 0, Math.PI * 2);
+                 ctx.fill();
+                 ctx.stroke();
+                 ctx.restore();
+             }
+         
+             // --- TROL ENEMIGO (🧌) ---
+             if (state.gameActive && state.lives > 0) {
+                 const startX = 30;
+                 const endTarget = castleX - 25;
+                 const progress = (30 - state.timeLeft) / 30;
+                 state.soldierX = startX + progress * (endTarget - startX);
+         
+                 ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                 ctx.beginPath();
+                 ctx.ellipse(state.soldierX, canvas.height - 25, 16, 6, 0, 0, Math.PI * 2);
+                 ctx.fill();
+         
+                 ctx.save();
+                 // Animación de caminata más lenta si el reloj de arena está activo
+                 const animSpeed = state.activeSlowdownQuestions > 0 ? 0.007 : 0.015;
+                 const bobbing = Math.sin(Date.now() * animSpeed) * 4;
+                 ctx.translate(state.soldierX, canvas.height - 45 + bobbing);
+                 
+                 ctx.font = '34px sans-serif';
+                 ctx.fillText('🧌', 0, 0);
+         
+                 // Efecto visual de hielo/relajamiento si el reloj de arena ralentiza al trol
+                 if (state.activeSlowdownQuestions > 0) {
+                     ctx.font = '16px sans-serif';
+                     ctx.fillText('❄️', 12, -25);
+                 }
+         
+                 ctx.fillStyle = '#1e293b';
+                 ctx.fillRect(-15, -35, 30, 4);
+                 ctx.fillStyle = state.activeSlowdownQuestions > 0 ? '#38bdf8' : '#f43f5e';
+                 ctx.fillRect(-15, -35, 30 * (state.timeLeft / 30), 4);
+         
+                 ctx.restore();
+             }
+         
+             // --- ACTUALIZAR Y DIBUJAR PROYECTILES ---
+             for (let i = state.projectiles.length - 1; i >= 0; i--) {
+                 const proj = state.projectiles[i];
+                 const dx = proj.targetX - proj.x;
+                 const dy = proj.targetY - proj.y;
+                 const dist = Math.sqrt(dx * dx + dy * dy);
+         
+                 if (dist < 8) {
+                     createExplosion(proj.targetX, proj.targetY, '#f59e0b', 20);
+                     createCoinSplash(proj.targetX, proj.targetY);
+                     state.projectiles.splice(i, 1);
+                 } else {
+                     const speed = 15;
+                     proj.x += (dx / dist) * speed;
+                     proj.y += (dy / dist) * speed;
+         
+                     const angle = Math.atan2(dy, dx);
+                     ctx.save();
+                     ctx.translate(proj.x, proj.y);
+                     ctx.rotate(angle);
+         
+                     ctx.strokeStyle = '#d1d5db';
+                     ctx.lineWidth = 3;
+                     ctx.beginPath();
+                     ctx.moveTo(-15, 0);
+                     ctx.lineTo(15, 0);
+                     ctx.stroke();
+         
+                     ctx.fillStyle = '#64748b';
+                     ctx.beginPath();
+                     ctx.moveTo(15, 0);
+                     ctx.lineTo(7, -4);
+                     ctx.lineTo(7, 4);
+                     ctx.fill();
+         
+                     ctx.strokeStyle = '#38bdf8';
+                     ctx.lineWidth = 2;
+                     ctx.beginPath();
+                     ctx.moveTo(-15, 0);
+                     ctx.lineTo(-19, -4);
+                     ctx.moveTo(-11, 0);
+                     ctx.lineTo(-15, -4);
+                     ctx.moveTo(-15, 0);
+                     ctx.lineTo(-19, 4);
+                     ctx.moveTo(-11, 0);
+                     ctx.lineTo(-15, 4);
+                     ctx.stroke();
+         
+                     ctx.restore();
+         
+                     if (Math.random() > 0.4) {
+                         state.particles.push({
+                             x: proj.x - (dx / dist) * 15,
+                             y: proj.y - (dy / dist) * 15,
+                             vx: (Math.random() - 0.5) * 1,
+                             vy: (Math.random() - 0.5) * 1,
+                             radius: Math.random() * 2 + 1,
+                             color: '#e2e8f0',
+                             alpha: 0.6,
+                             decay: 0.08
+                         });
+                     }
+                 }
+             }
+         
+             // --- ACTUALIZAR Y DIBUJAR PARTÍCULAS ---
+             for (let i = state.particles.length - 1; i >= 0; i--) {
+                 const p = state.particles[i];
+                 p.x += p.vx;
+                 p.y += p.vy;
+                 p.alpha -= p.decay;
+         
+                 if (p.alpha <= 0) {
+                     state.particles.splice(i, 1);
+                 } else {
+                     ctx.save();
+                     ctx.globalAlpha = p.alpha;
+                     if (p.isCoin) {
+                         ctx.fillStyle = '#fbbf24';
+                         ctx.strokeStyle = '#d97706';
+                         ctx.lineWidth = 1;
+                         ctx.beginPath();
+                         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                         ctx.fill();
+                         ctx.stroke();
+                         ctx.fillStyle = '#fff';
+                         ctx.font = '8px sans-serif';
+                         ctx.fillText('$', p.x, p.y + 3);
+                     } else {
+                         ctx.fillStyle = p.color;
+                         ctx.beginPath();
+                         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                         ctx.fill();
+                     }
+                     ctx.restore();
+                 }
+             }
+         
+             ctx.restore();
+             requestAnimationFrame(render);
+         }
+         
+         // --- CONTROL DE TIEMPO DE RESPUESTA ---
+         let timerInterval = null;
+         
+         function startTimer() {
+             clearInterval(timerInterval);
+             state.timeLeft = 30.0;
+             hudTimer.textContent = `${state.timeLeft.toFixed(1)}s`;
+             
+             timerInterval = setInterval(() => {
+                 if (!state.gameActive || !state.answeringActive) return;
+                 
+                 // Ralentización del 50% con Reloj de Arena, y factor de velocidad acumulado del trol
+                 let speedMultiplier = state.trollSpeedFactor;
+                 if (state.activeSlowdownQuestions > 0) {
+                     speedMultiplier *= 0.5;
+                 }
+                 
+                 const timeStep = 0.1 * speedMultiplier;
+                 state.timeLeft -= timeStep;
+                 
+                 if (state.timeLeft <= 0) {
+                     state.timeLeft = 0;
+                     hudTimer.textContent = "0.0s";
+                     clearInterval(timerInterval);
+                     handleAnswerTimeout();
+                 } else {
+                     hudTimer.textContent = `${state.timeLeft.toFixed(1)}s`;
+                 }
+             }, 100);
+         }
+         
+         function stopTimer() {
+             clearInterval(timerInterval);
+         }
+         
+         // --- SISTEMA DE PREGUNTAS (TRIVIA) ---
+         function shuffleArray(array) {
+             for (let i = array.length - 1; i > 0; i--) {
+                 const j = Math.floor(Math.random() * (i + 1));
+                 [array[i], array[j]] = [array[j], array[i]];
+             }
+         }
+         
+         function loadNextQuestion() {
+             if (state.lives <= 0) {
+                 endGame();
+                 return;
+             }
+         
+             if (state.currentQuestionIndex >= state.questionPool.length) {
+                 state.currentQuestionIndex = 0;
+                 shuffleArray(state.questionPool);
+             }
+         
+             const currentQ = state.questionPool[state.currentQuestionIndex];
+             state.answeringActive = true;
+             state.questionActive = true;
+         
+             questionCategory.textContent = currentQ.cat;
+             questionIndex.textContent = `Pregunta ${state.currentQuestionIndex + 1}`;
+             questionText.textContent = currentQ.q;
+         
+             const options = currentQ.a.map((option, index) => {
+                 return { text: option, isCorrect: index === currentQ.c };
+             });
+             shuffleArray(options);
+         
+             answersContainer.innerHTML = '';
+             options.forEach(opt => {
+                 const button = document.createElement('button');
+                 button.className = "answer-button w-full text-left px-5 py-4 bg-slate-900 border border-indigo-500/20 hover:border-indigo-500/60 hover:bg-slate-800 rounded-xl transition-all duration-150 font-medium text-slate-200 shadow hover:shadow-indigo-500/10 active:scale-[0.98]";
+                 button.dataset.correct = opt.isCorrect;
+                 button.innerHTML = `
+                     <div class="flex items-center gap-3">
+                         <span class="step-num w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-indigo-400">
+                             <i class="fa-solid fa-chess-rook text-[10px]"></i>
+                         </span>
+                         <span>${opt.text}</span>
+                     </div>
+                 `;
+                 button.onclick = () => selectAnswer(button, opt.isCorrect);
+                 answersContainer.appendChild(button);
+             });
+         
+             startTimer();
+         }
+         
+         // --- PROCESAMIENTO DE RESPUESTAS ---
+         function selectAnswer(selectedButton, isCorrect) {
+             if (!state.answeringActive) return;
+             state.answeringActive = false;
+             state.questionActive = false;
+             stopTimer();
+         
+             const buttons = answersContainer.querySelectorAll('button');
+             buttons.forEach(btn => btn.disabled = true);
+         
+             // Reducir contador del Reloj de Arena al finalizar la pregunta
+             if (state.activeSlowdownQuestions > 0) {
+                 state.activeSlowdownQuestions--;
+                 updateActiveEffectsIndicators();
+             }
+         
+             if (isCorrect) {
+                 handleCorrectAnswer(selectedButton);
+             } else {
+                 handleIncorrectAnswer(selectedButton);
+             }
+         }
+         
+         // RESPUESTA CORRECTA
+         function handleCorrectAnswer(selectedButton) {
+             sfx.correct();
+             
+             selectedButton.classList.remove('bg-slate-900', 'border-indigo-500/20');
+             selectedButton.classList.add('bg-emerald-950/80', 'border-emerald-500/80', 'text-emerald-300');
+             selectedButton.querySelector('.step-num').classList.add('bg-emerald-900', 'border-emerald-500');
+         
+             // Monedas proporcionales al tiempo
+             const scoreEarned = Math.max(10, Math.round(state.timeLeft * 5));
+             state.coins += scoreEarned;
+             
+             // Se suman también al monedero permanente real
+             state.totalCoins += scoreEarned;
+             saveToStorage();
+             
+             hudCoins.textContent = state.coins;
+         
+             // Aumentar progresivamente la velocidad de los troles
+             state.trollSpeedFactor += 0.08; 
+             document.getElementById('hud-speed').textContent = `${Math.round(state.trollSpeedFactor * 100)}%`;
+         
+             // Disparar proyectil
+             sfx.shoot();
+             state.projectiles.push({
+                 x: canvas.width - 150,
+                 y: canvas.height - 95,
+                 targetX: state.soldierX,
+                 targetY: canvas.height - 45
+             });
+         
+             actionText.textContent = `¡CORRECTO! +${scoreEarned}🪙`;
+             actionText.className = "text-emerald-400 font-extrabold text-3xl md:text-5xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
+             actionOverlay.classList.remove('opacity-0', 'scale-50');
+             actionOverlay.classList.add('opacity-100', 'scale-100');
+         
+             setTimeout(() => {
+                 actionOverlay.classList.remove('opacity-100', 'scale-100');
+                 actionOverlay.classList.add('opacity-0', 'scale-50');
+                 
+                 state.currentQuestionIndex++;
+                 loadNextQuestion();
+             }, 1800);
+         }
+         
+         // RESPUESTA INCORRECTA
+         function handleIncorrectAnswer(selectedButton) {
+             selectedButton.classList.remove('bg-slate-900', 'border-indigo-500/20');
+             selectedButton.classList.add('bg-rose-950/80', 'border-rose-500/80', 'text-rose-300');
+             selectedButton.querySelector('.step-num').classList.add('bg-rose-900', 'border-rose-500');
+         
+             const buttons = answersContainer.querySelectorAll('button');
+             const currentQ = state.questionPool[state.currentQuestionIndex];
+             const correctText = currentQ.a[currentQ.c];
+             
+             buttons.forEach(btn => {
+                 if (btn.innerText.includes(correctText)) {
+                     btn.classList.add('bg-emerald-950/40', 'border-emerald-500/40', 'text-emerald-400');
+                 }
+             });
+         
+             triggerCastleDamage("¡FALLO!");
+         }
+         
+         // EXPANSIÓN DEL TIEMPO (TIMEOUT)
+         function handleAnswerTimeout() {
+             state.answeringActive = false;
+             state.questionActive = false;
+             
+             if (state.activeSlowdownQuestions > 0) {
+                 state.activeSlowdownQuestions--;
+                 updateActiveEffectsIndicators();
+             }
+         
+             const buttons = answersContainer.querySelectorAll('button');
+             buttons.forEach(btn => btn.disabled = true);
+         
+             triggerCastleDamage("¡TIEMPO AGOTADO!");
+         }
+         
+         // IMPACTO AL CASTILLO
+         function triggerCastleDamage(reasonText) {
+             // COMPROBAR SI HAY ESCUDO ACTIVO
+             if (state.hasShield) {
+                 state.hasShield = false;
+                 updateActiveEffectsIndicators();
+                 sfx.shieldBlock();
+         
+                 // Animación de escudo bloqueando
+                 actionText.textContent = `🛡️ ¡ESCUDO ABSORBIÓ DAÑO!`;
+                 actionText.className = "text-blue-400 font-extrabold text-2xl md:text-4xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
+                 actionOverlay.classList.remove('opacity-0', 'scale-50');
+                 actionOverlay.classList.add('opacity-100', 'scale-100');
+         
+                 // Partículas del escudo
+                 createExplosion(canvas.width - 60, canvas.height - 60, '#60a5fa', 30);
+         
+                 setTimeout(() => {
+                     actionOverlay.classList.remove('opacity-100', 'scale-100');
+                     actionOverlay.classList.add('opacity-0', 'scale-50');
+                     state.currentQuestionIndex++;
+                     loadNextQuestion();
+                 }, 2000);
+                 return;
+             }
+         
+             // Daño normal si no hay escudo
+             sfx.damage();
+             state.lives--;
+             updateLivesHUD();
+         
+             const castleX = canvas.width - 90;
+             const castleY = canvas.height - 80;
+             createExplosion(castleX, castleY, '#475569', 25);
+             createExplosion(castleX + 30, castleY + 20, '#f43f5e', 15);
+         
+             state.canvasShake = 15;
+         
+             damageFlash.classList.remove('bg-red-600/0');
+             damageFlash.classList.add('bg-red-600/30');
+             setTimeout(() => {
+                 damageFlash.classList.remove('bg-red-600/30');
+                 damageFlash.classList.add('bg-red-600/0');
+             }, 300);
+         
+             actionText.textContent = `${reasonText} 🛡️-1`;
+             actionText.className = "text-rose-500 font-extrabold text-3xl md:text-5xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
+             actionOverlay.classList.remove('opacity-0', 'scale-50');
+             actionOverlay.classList.add('opacity-100', 'scale-100');
+         
+             setTimeout(() => {
+                 actionOverlay.classList.remove('opacity-100', 'scale-100');
+                 actionOverlay.classList.add('opacity-0', 'scale-50');
+         
+                 if (state.lives <= 0) {
+                     endGame();
+                 } else {
+                     state.currentQuestionIndex++;
+                     loadNextQuestion();
+                 }
+             }, 2000);
+         }
+         
+         // --- REFRESCAR ELEMENTOS VISUALES ---
+         function updateLivesHUD() {
+             hudLives.innerHTML = '';
+             for (let i = 0; i < 5; i++) {
+                 const shield = document.createElement('i');
+                 if (i < state.lives) {
+                     shield.className = "fa-solid fa-shield-halved text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]";
+                 } else {
+                     shield.className = "fa-solid fa-shield-halved text-slate-700";
+                 }
+                 hudLives.appendChild(shield);
+             }
+         }
+         
+         function updateActiveEffectsIndicators() {
+             if (state.activeSlowdownQuestions > 0) {
+                 indicatorHourglass.classList.remove('hidden');
+                 indicatorHourglass.classList.add('flex');
+                 hourglassCount.textContent = state.activeSlowdownQuestions;
+             } else {
+                 indicatorHourglass.classList.add('hidden');
+                 indicatorHourglass.classList.remove('flex');
+             }
+         
+             if (state.hasShield) {
+                 indicatorShield.classList.remove('hidden');
+                 indicatorShield.classList.add('flex');
+             } else {
+                 indicatorShield.classList.add('hidden');
+                 indicatorShield.classList.remove('flex');
+             }
+         }
+         
+         // --- CONTROL DEL MERCADO (TIENDA MODAL) ---
+         function openShop() {
+             // Pausar partida si está activa
+             if (state.gameActive && state.answeringActive) {
+                 stopTimer();
+                 state.answeringActive = false;
+             }
+             
+             sfx.coin();
+             renderShopObjects();
+             renderShopCharacters();
+             
+             shopWallet.textContent = state.gameActive ? state.coins : state.totalCoins;
+             shopModal.classList.remove('hidden');
+         }
+         
+         function closeShop() {
+             shopModal.classList.add('hidden');
+             sfx.coin();
+         
+             // Reanudar partida
+             if (state.gameActive && !state.answeringActive && state.lives > 0 && state.questionActive) {
+                 state.answeringActive = true;
+                 startTimer();
+             }
+             
+             // Refrescar selector de inicio
+             renderCharacterSelector();
+         }
+         
+         // RENDERIZAR OBJETOS EN TIENDA
+         function renderShopObjects() {
+             shopObjectsSection.innerHTML = '';
+             
+             // Las monedas que el usuario gasta en partida provienen de su botín de la ronda activa.
+             // Si está fuera de partida, usa su "Monedero Real" (totalCoins).
+             const currentBalance = state.gameActive ? state.coins : state.totalCoins;
+         
+             ALL_ITEMS.forEach(item => {
+                 const card = document.createElement('div');
+                 card.className = "bg-slate-950/80 border border-indigo-500/20 rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-all";
+                 
+                 const isAffordable = currentBalance >= item.cost;
+                 
+                 // Ciertas restricciones tácticas de compra
+                 let canBuy = isAffordable;
+                 let errorMsg = "";
+         
+                 if (!state.gameActive) {
+                     canBuy = false;
+                     errorMsg = "Sólo en defensa";
+                 } else if (item.id === 'item_brick' && state.lives >= 5) {
+                     canBuy = false;
+                     errorMsg = "Murallas al 100%";
+                 } else if (item.id === 'item_shield' && state.hasShield) {
+                     canBuy = false;
+                     errorMsg = "Ya tienes un escudo";
+                 } else if ((item.id === 'item_swords' || item.id === 'item_crystal') && !state.questionActive) {
+                     canBuy = false;
+                     errorMsg = "Espera pregunta";
+                 }
+         
+                 card.innerHTML = `
+                     <div class="flex gap-3">
+                         <span class="text-3xl p-2 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-center h-12 w-12">${item.emoji}</span>
+                         <div>
+                             <h4 class="font-extrabold text-slate-100 text-sm">${item.name}</h4>
+                             <p class="text-[11px] text-slate-400 mt-0.5 leading-snug">${item.desc}</p>
+                         </div>
+                     </div>
+                     <div class="flex items-center justify-between mt-4 border-t border-slate-900 pt-3">
+                         <div class="flex items-center gap-1 font-bold text-yellow-400 text-sm">
+                             <span>🪙</span> ${item.cost}
+                         </div>
+                         <button class="buy-item-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all ${canBuy ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 active:scale-95' : 'bg-slate-800 text-slate-500 cursor-not-allowed'}" 
+                                 ${canBuy ? '' : 'disabled'}>
+                             ${errorMsg ? errorMsg : 'COMPRAR'}
+                         </button>
+                     </div>
+                 `;
+         
+                 if (canBuy) {
+                     card.querySelector('.buy-item-btn').onclick = () => buyItem(item);
+                 }
+                 shopObjectsSection.appendChild(card);
+             });
+         }
+         
+         // RENDERIZAR PERSONAJES EN TIENDA
+         function renderShopCharacters() {
+             shopCharactersSection.innerHTML = '';
+             const currentBalance = state.gameActive ? state.coins : state.totalCoins;
+         
+             ALL_CHARACTERS.forEach(char => {
+                 const card = document.createElement('div');
+                 const isUnlocked = state.unlockedCharacters.includes(char.emoji);
+                 const isAffordable = currentBalance >= char.cost;
+                 const isSelected = state.playerCharacter === char.emoji;
+         
+                 card.className = `bg-slate-950/80 border rounded-2xl p-4 flex flex-col justify-between hover:border-amber-500/40 transition-all ${isSelected ? 'border-amber-500/80 ring-1 ring-amber-500/30' : 'border-indigo-500/20'}`;
+         
+                 card.innerHTML = `
+                     <div class="flex flex-col items-center justify-center text-center">
+                         <span class="text-4xl mb-1">${char.emoji}</span>
+                         <h4 class="font-bold text-slate-200 text-xs">${char.name}</h4>
+                     </div>
+                     <div class="flex flex-col items-center justify-center mt-3 border-t border-slate-900 pt-3 w-full">
+                         ${isUnlocked ? `
+                             <button class="select-char-btn w-full py-1 rounded-lg text-[10px] font-black tracking-wider transition-all ${isSelected ? 'bg-indigo-950 border border-indigo-500/60 text-indigo-300' : 'bg-slate-800 hover:bg-slate-700 text-slate-300 active:scale-95'}" ${isSelected ? 'disabled' : ''}>
+                                 ${isSelected ? 'ACTIVO' : 'EQUIPAR'}
+                             </button>
+                         ` : `
+                             <button class="buy-char-btn w-full py-1 bg-amber-500 hover:bg-amber-400 text-slate-950 active:scale-95 rounded-lg text-[10px] font-black transition-all flex items-center justify-center gap-1 ${isAffordable ? '' : 'opacity-50 cursor-not-allowed'}" ${isAffordable ? '' : 'disabled'}>
+                                 🪙 ${char.cost}
+                             </button>
+                         `}
+                     </div>
+                 `;
+         
+                 if (isUnlocked && !isSelected) {
+                     card.querySelector('.select-char-btn').onclick = () => {
+                         state.playerCharacter = char.emoji;
+                         saveToStorage();
+                         sfx.coin();
+                         renderShopCharacters();
+                     };
+                 } else if (!isUnlocked) {
+                     card.querySelector('.buy-char-btn').onclick = () => {
+                         if (isAffordable) {
+                             buyCharacter(char);
+                         } else {
+                             sfx.buyError();
+                         }
+                     };
+                 }
+         
+                 shopCharactersSection.appendChild(card);
+             });
+         }
+         
+         // COMPRAR OBJETO
+         function buyItem(item) {
+             // Descontar saldo
+             if (state.gameActive) {
+                 state.coins -= item.cost;
+                 state.totalCoins -= item.cost;
+                 hudCoins.textContent = state.coins;
+             } else {
+                 state.totalCoins -= item.cost;
+             }
+             saveToStorage();
+             shopWallet.textContent = state.gameActive ? state.coins : state.totalCoins;
+         
+             sfx.magicSpell();
+         
+             // EJECUTAR EFECTO AL INSTANTE
+             if (item.id === 'item_hourglass') {
+                 state.activeSlowdownQuestions += 3;
+                 updateActiveEffectsIndicators();
+             } else if (item.id === 'item_brick') {
+                 state.lives = Math.min(5, state.lives + 1);
+                 updateLivesHUD();
+                 // Partículas flotantes de reparación
+                 createExplosion(canvas.width - 60, canvas.height - 50, '#10b981', 15);
+             } else if (item.id === 'item_shield') {
+                 state.hasShield = true;
+                 updateActiveEffectsIndicators();
+             } else if (item.id === 'item_swords') {
+                 executeSwordsInstantKill();
+                 closeShop();
+                 return; // Evita refresco de tienda ya que cerró
+             } else if (item.id === 'item_crystal') {
+                 executeCrystalBall5050();
+                 closeShop();
+                 return; // Evita refresco de tienda ya que cerró
+             }
+         
+             renderShopObjects();
+         }
+         
+         // COMPRAR PERSONAJE PERMANENTE
+         function buyCharacter(char) {
+             if (state.gameActive) {
+                 state.coins -= char.cost;
+                 state.totalCoins -= char.cost;
+                 hudCoins.textContent = state.coins;
+             } else {
+                 state.totalCoins -= char.cost;
+             }
+             state.unlockedCharacters.push(char.emoji);
+             state.playerCharacter = char.emoji; // Equipa automáticamente
+             
+             saveToStorage();
+             sfx.correct();
+         
+             shopWallet.textContent = state.gameActive ? state.coins : state.totalCoins;
+             renderShopCharacters();
+         }
+         
+         // --- EFECTO: ESPADAS GEMELAS (INSTANT KILL) ---
+         function executeSwordsInstantKill() {
+             if (!state.questionActive) return;
+             state.answeringActive = false;
+             state.questionActive = false;
+             stopTimer();
+         
+             // Animación de flecha masiva
+             sfx.shoot();
+             state.projectiles.push({
+                 x: canvas.width - 150,
+                 y: canvas.height - 95,
+                 targetX: state.soldierX,
+                 targetY: canvas.height - 45
+             });
+         
+             actionText.textContent = "⚔️ ¡ENEMIGO ELIMINADO!";
+             actionText.className = "text-amber-400 font-extrabold text-2xl md:text-4xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]";
+             actionOverlay.classList.remove('opacity-0', 'scale-50');
+             actionOverlay.classList.add('opacity-100', 'scale-100');
+         
+             setTimeout(() => {
+                 actionOverlay.classList.remove('opacity-100', 'scale-100');
+                 actionOverlay.classList.add('opacity-0', 'scale-50');
+                 
+                 state.currentQuestionIndex++;
+                 loadNextQuestion();
+             }, 1800);
+         }
+         
+         // EFECTO: BOLA DE CRISTAL (50/50)
+         function executeCrystalBall5050() {
+             if (!state.questionActive) return;
+         
+             const buttons = Array.from(answersContainer.querySelectorAll('button'));
+             const incorrectButtons = buttons.filter(btn => btn.dataset.correct === "false");
+             
+             // Barajar incorrectas y deshabilitar 2
+             shuffleArray(incorrectButtons);
+             for (let i = 0; i < Math.min(2, incorrectButtons.length); i++) {
+                 incorrectButtons[i].disabled = true;
+                 incorrectButtons[i].classList.add('opacity-30', 'pointer-events-none');
+             }
+         }
+         
+         // --- RENDER DEL SELECTOR DE INICIO ---
+         function renderCharacterSelector() {
+             const container = document.getElementById('character-selector-container');
+             container.innerHTML = '';
+         
+             ALL_CHARACTERS.forEach(char => {
+                 const isUnlocked = state.unlockedCharacters.includes(char.emoji);
+                 const isSelected = state.playerCharacter === char.emoji;
+         
+                 const button = document.createElement('button');
+                 button.className = `w-14 h-14 rounded-xl flex items-center justify-center text-2xl transition-all relative ${isUnlocked ? 'bg-slate-950/60 border-2 cursor-pointer active:scale-95' : 'bg-slate-950/40 border-2 border-slate-800/40 opacity-40 cursor-default'} ${isSelected ? 'border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.3)] scale-105' : 'border-indigo-500/20'}`;
+                 button.innerHTML = char.emoji;
+         
+                 if (!isUnlocked) {
+                     // Mostrar candado pequeño
+                     const lock = document.createElement('span');
+                     lock.className = "absolute -bottom-1 -right-1 bg-slate-900 border border-slate-700 w-5 h-5 rounded-full flex items-center justify-center text-[8px] text-amber-500";
+                     lock.innerHTML = `<i class="fa-solid fa-lock"></i>`;
+                     button.appendChild(lock);
+                 }
+         
+                 if (isUnlocked) {
+                     button.onclick = () => {
+                         state.playerCharacter = char.emoji;
+                         saveToStorage();
+                         sfx.coin();
+                         renderCharacterSelector();
+                     };
+                 }
+         
+                 container.appendChild(button);
+             });
+         }
+         
+         // --- INICIAR PARTIDA ---
+         function startGame() {
+             state.questionPool = [...QUESTIONS_DB];
+             shuffleArray(state.questionPool);
+             
+             state.coins = 0;
+             state.lives = 5;
+             state.currentQuestionIndex = 0;
+             state.gameActive = true;
+             state.projectiles = [];
+             state.particles = [];
+             state.activeSlowdownQuestions = 0;
+             state.hasShield = false;
+             state.trollSpeedFactor = 1.0;
+             state.questionActive = false;
+         
+             hudCoins.textContent = "0";
+             document.getElementById('hud-speed').textContent = "100%";
+             updateLivesHUD();
+             updateActiveEffectsIndicators();
+         
+             screenStart.classList.add('hidden');
+             screenGameOver.classList.add('hidden');
+             btnInGameShop.classList.remove('hidden');
+             screenQuestion.classList.remove('hidden');
+         
+             loadNextQuestion();
+         }
+         
+         // --- FINALIZAR PARTIDA ---
+         function endGame() {
+             state.gameActive = false;
+             stopTimer();
+             sfx.gameover();
+         
+             screenQuestion.classList.add('hidden');
+             btnInGameShop.classList.add('hidden');
+             screenGameOver.classList.remove('hidden');
+         
+             const finalCoinsElement = document.getElementById('final-coins');
+             finalCoinsElement.textContent = state.coins;
+         
+             const gameoverTitle = document.getElementById('gameover-title');
+             const gameoverIcon = document.getElementById('gameover-icon');
+             const finalFeedback = document.getElementById('final-feedback');
+         
+             // Feedback dinámico según rendimiento histórico
+             if (state.coins >= 1000) {
+                 gameoverTitle.textContent = "¡REINO SALVADO!";
+                 gameoverTitle.className = "text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-yellow-400 animate-bounce";
+                 gameoverIcon.textContent = "🏆";
+                 finalFeedback.textContent = "¡Un conocimiento insuperable! El castillo ha permanecido en pie.";
+             } else if (state.coins >= 100) {
+                 gameoverTitle.textContent = "¡VICTORIA DEFENSIVA!";
+                 gameoverTitle.className = "text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-amber-400";
+                 gameoverIcon.textContent = "🛡️";
+                 finalFeedback.textContent = "¡Muy buena defensa táctica, el rey te felicita!";
+             } else {
+                 gameoverTitle.textContent = "¡MURALLAS DESTRUIDAS!";
+                 gameoverTitle.className = "text-3xl md:text-4xl font-extrabold medieval-title tracking-wide text-rose-500";
+                 gameoverIcon.textContent = "🧌";
+                 finalFeedback.textContent = "¡Los troles rompieron la defensa! Prepárate mejor e inténtalo de nuevo.";
+             }
+         }
+         
+         // --- ASOCIACIÓN DE EVENTOS DEL DOM ---
         btnPlay.addEventListener('click', () => {
-            sfx.init();
-            sfx.coin();
-            startGame();
-        });
-
-        btnRestart.addEventListener('click', () => {
-            sfx.coin();
-            startGame();
-        });
-
-        // Eventos de la tienda
-        btnOpenShop.addEventListener('click', openShop);
-        btnOverShop.addEventListener('click', openShop);
-        btnInGameShop.addEventListener('click', openShop);
-        btnCloseShop.addEventListener('click', closeShop);
-
-        // Control de pestañas del modal
-        tabObjects.addEventListener('click', () => {
-            tabObjects.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-amber-500 text-amber-400";
-            tabCharacters.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-transparent text-slate-400 hover:text-slate-200";
-            shopObjectsSection.classList.remove('hidden');
-            shopCharactersSection.classList.add('hidden');
-        });
-
-        tabCharacters.addEventListener('click', () => {
-            tabCharacters.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-amber-500 text-amber-400";
-            tabObjects.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-transparent text-slate-400 hover:text-slate-200";
-            shopCharactersSection.classList.remove('hidden');
-            shopObjectsSection.classList.add('hidden');
-        });
-
-        // Inicializar vistas al arrancar
-        window.onload = function() {
-            renderCharacterSelector();
-            updateLivesHUD();
-            render();
-        };
-    </script>
-</body>
+             sfx.init();
+             sfx.coin();
+             
+             // Iniciar la música si no está sonando ya
+             if (!isMusicPlaying) {
+                 toggleMusic();
+             }
+             
+             startGame();
+         });
+         
+         btnRestart.addEventListener('click', () => {
+             sfx.coin();
+             startGame();
+         });
+         
+         // Eventos de la tienda
+         btnOpenShop.addEventListener('click', openShop);
+         btnOverShop.addEventListener('click', openShop);
+         btnInGameShop.addEventListener('click', openShop);
+         btnCloseShop.addEventListener('click', closeShop);
+         
+         // Control de pestañas del modal
+         tabObjects.addEventListener('click', () => {
+             tabObjects.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-amber-500 text-amber-400";
+             tabCharacters.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+             shopObjectsSection.classList.remove('hidden');
+             shopCharactersSection.classList.add('hidden');
+         });
+         
+         tabCharacters.addEventListener('click', () => {
+             tabCharacters.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-amber-500 text-amber-400";
+             tabObjects.className = "flex-1 py-3 text-center text-sm font-extrabold border-b-2 border-transparent text-slate-400 hover:text-slate-200";
+             shopCharactersSection.classList.remove('hidden');
+             shopObjectsSection.classList.add('hidden');
+         });
+         
+         // Inicializar vistas al arrancar
+         window.onload = function() {
+             renderCharacterSelector();
+             updateLivesHUD();
+             render();
+         };
+      </script>
+   </body>
 </html>
